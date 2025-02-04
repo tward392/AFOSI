@@ -1,0 +1,33 @@
+<html>
+ <head>
+ <link rel="stylesheet" href="RightClickMenu.css" type="text/css" />
+ </head>
+ 
+<body>
+ <div id="pageContainer">
+
+  <ul>
+   <li><a href="http://luke.breuer.com">Author's Hompage</a></li>
+   <li><a href="http://luke.breuer.com/tutorial">Tutorials</a></li>
+   <li><a href="http://luke.breuer.com/webmark">WebMark</a></li>
+
+   <li><a href="javascript:getObjURL('12345678');">Testing</a>
+
+   <li><a href="javascript:getObjURL('12345678');"><img src="separator.png" alt=""></a>
+  </ul>
+
+ </div>
+</div>
+
+ <div id="divContext" style="border: 1px solid gray; display: none; position: absolute">
+  <ul class="cmenu">
+   <li><a id="aClone" href="#">Clone</a></li>
+   <li><a id="aKeepOnTop" href="#">Keep On Top of Recent Cache</a></li>
+   <li class=topSep><a id="aCancel" href="#">Cancel</a></li>
+  </ul>
+ </div>
+
+  <script type="text/javascript" src="RightClickMenu.js"></script>
+
+ </body>
+</html>

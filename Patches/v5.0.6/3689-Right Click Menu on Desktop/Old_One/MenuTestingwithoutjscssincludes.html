@@ -1,0 +1,242 @@
+<html>
+ <head>
+  <style type="text/css">
+   .cmenu {
+           margin: 0; 
+           padding: 0.3em; 
+           list-style-type: none; 
+           background-color: #F0F0F0; 
+           font-family: "Trebuchet MS", Helvetica, sans-serif; 
+           font-size:0.7em; 
+           font-weight: bold ;
+           background-image: url("sidesep.png");
+           background-repeat: repeat-y;
+           background-position: 25px 0px;
+           
+          }
+   
+
+   .cmenu hr {
+              border: 0; 
+              border-bottom: 1px solid grey; 
+              margin: 3px 0px 3px 0px; 
+              width: 10em;
+             }
+
+   .cmenu a {
+             border: 0 !important;
+            }
+   
+   .cmenu a:link {
+                  text-decoration:none;
+                  color:#000000;
+                  padding:4px;
+                  padding-left: 30px;
+                  width:200px;
+                 }
+   
+    .cmenu a:hover {
+                    text-decoration:none;color: black; 
+                    background-image: url("highlightBG.png");
+                    background-repeat: repeat-x;
+                    display:block;
+                    padding:4px;
+                    padding-left: 30px;
+                    width:200px;
+                   }
+
+    .cmenu a:visited {
+                      text-decoration:none;
+                      color:#000000;
+                      padding:4px;
+                      width:200px;
+                      padding-left: 30px;
+                     }
+
+    .cmenu a:active {
+                     text-decoration:none;
+                     color:#000000;
+                     padding:4px;
+                     width:200px;
+                     padding-left: 30px;
+                    }
+
+    .cmenu .topSep { 
+                    margin-top: 0.3em; 
+                    padding-top: 0.3em;
+                    background-image: url("separator.png");
+                    background-repeat: repeat-x;
+
+                   } 
+
+     th, td {
+             text-align: left; 
+             padding-right:1em;
+            }
+  
+    table {
+           margin: 0 0 0.4em 1.3em;
+           border: 1px solid rgb(240, 240, 240);
+          }
+
+   #divContext {
+                background-image: url("sidesep.png");
+                background-repeat: repeat-y;
+                background-position: 0px 25px;
+
+                 -ms-filter: "progid:DXImageTransform.Microsoft.Shadow"(Strength=6, Direction=135, Color=, #000000);
+                     filter: "progid:DXImageTransform.Microsoft.Shadow"(Strength=6, Direction=135, Color=, #000000);
+                     filter: progid:DXImageTransform.Microsoft.dropShadow(color=#ABABAB, offX=2, offY=2, positive=true);
+
+               }
+
+   #separate {
+              background-image: url("separator.png");
+              background-repeat: repeat-x;
+             }
+
+   #sidesep {
+             float: left;
+             background-image: url("sidesep.png");
+             background-position: right-top;
+             background-repeat: repeat-y;
+            }
+
+  </style>
+
+ </head>
+ 
+<body>
+ <div id="pageContainer">
+
+  <ul>
+   <li><a href="http://luke.breuer.com">Author's Hompage</a></li>
+   <li><a href="http://luke.breuer.com/tutorial">Tutorials</a></li>
+   <li><a href="http://luke.breuer.com/webmark">WebMark</a></li>
+
+   <li><a href="javascript:getObjURL('12345678');">Testing</a>
+  </ul>
+
+ </div>
+</div>
+ <div id="divContext" style="border: 1px solid gray; display: none; position: absolute">
+
+
+  <ul class="cmenu">
+   <li><a id="aClone" href="#">Clone</a></li>
+   <li><a id="aKeepOnTop" href="#">Keep On Top of Recent Cache</a></li>
+   <li class=topSep><a id="aCancel" href="#">Cancel</a></li>
+  </ul>
+
+ </div>
+
+ <script language="JavaScript" type="text/javascript">
+  <!--
+   var _replaceContext = false;         // replace the system context menu?
+   var _mouseOverContext = false;       // is the mouse over the context menu?
+   var _noContext = false;              // disable the context menu?
+   var _divContext = $('divContext');   // makes my life easier
+
+   InitContext();
+
+   function InitContext()
+   {
+    _divContext.onmouseover = function() { _mouseOverContext = true; };
+    _divContext.onmouseout = function() { _mouseOverContext = false; };
+
+    document.body.onmousedown = ContextMouseDown;
+    document.body.oncontextmenu = ContextShow;
+
+    $('aCancel').onclick = CloseContext;
+   }
+
+   // call from the onMouseDown event, passing the event if standards compliant
+   function ContextMouseDown(event)
+   {
+    if (_noContext || _mouseOverContext)
+      return;
+
+    // IE is evil and doesn't pass the event object
+    if (event == null)
+      event = window.event;
+
+    // we assume we have a standards compliant browser, but check if we have IE
+    var target = event.target != null ? event.target : event.srcElement;
+
+    // only show the context menu if the right mouse button is pressed
+    //   and a hyperlink has been clicked (the code can be made more selective)
+    if (event.button == 2 && target.tagName.toLowerCase() == 'a' && target.href.substr(0,20).toLowerCase()=='javascript:getobjurl')
+      _replaceContext = true;
+    else if (!_mouseOverContext)
+        _divContext.style.display = 'none';
+   }
+
+   function CloseContext()
+   {
+    _mouseOverContext;
+    _divContext.style.display = 'none';
+   }
+
+   // call from the onContextMenu event, passing the event
+   // if this function returns false, the browser's context menu will not show up
+   function ContextShow(event)
+   {
+    if (_noContext || _mouseOverContext)
+      return;
+
+    // IE is evil and doesn't pass the event object
+    if (event == null)
+      event = window.event;
+
+    // we assume we have a standards compliant browser, but check if we have IE
+    var target = event.target != null ? event.target : event.srcElement;
+
+    if (_replaceContext)
+      {
+       $('aClone').href = target.href.replace('getObjURL','cloneObj');
+       $('aKeepOnTop').href = target.href.replace('getObjURL','KeepOnTop');
+
+       // document.body.scrollTop does not work in IE
+       var scrollTop = document.body.scrollTop ? document.body.scrollTop : document.documentElement.scrollTop;
+       var scrollLeft = document.body.scrollLeft ? document.body.scrollLeft : document.documentElement.scrollLeft;
+
+       // hide the menu first to avoid an "up-then-over" visual effect
+       _divContext.style.display = 'none';
+       _divContext.style.left = event.clientX + scrollLeft + 'px';
+       _divContext.style.top = event.clientY + scrollTop + 'px';
+       _divContext.style.display = 'block';
+
+       _replaceContext = false;
+
+       return false;
+      }
+   }
+
+   function DisableContext()
+   {
+    _noContext = true;
+    CloseContext();
+    $('aEnable').style.display = '';
+
+    return false;
+   }
+
+   function EnableContext()
+   {
+    _noContext = false;
+    _mouseOverContext = false; // this gets left enabled when "disable menus" is chosen
+    $('aEnable').style.display = 'none';
+
+    return false;
+   }
+
+   // comes from prototype.js; this is simply easier on the eyes and fingers
+   function $(id)
+   {
+    return document.getElementById(id);
+   }
+
+   //-->
+  </script>
+ </body>
+</html>

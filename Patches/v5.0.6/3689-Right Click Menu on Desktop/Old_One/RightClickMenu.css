@@ -1,0 +1,93 @@
+   .cmenu {
+           margin: 0; 
+           padding: 0.3em; 
+           list-style-type: none; 
+           background-color: #F0F0F0; 
+           font-family: "Trebuchet MS", Helvetica, sans-serif; 
+           font-size:0.7em; 
+           font-weight: bold ;
+           background-image: url("sidesep.png");
+           background-repeat: repeat-y;
+           background-position: 25px 0px;
+           
+          }
+   
+
+   .cmenu hr {
+              border: 0; 
+              border-bottom: 1px solid grey; 
+              margin: 3px 0px 3px 0px; 
+              width: 10em;
+             }
+
+   .cmenu a {
+             border: 0 !important;
+            }
+   
+   .cmenu a:link {
+                  text-decoration:none;
+                  color:#000000;
+                  padding:4px;
+                  padding-left: 30px;
+                  display:block;
+                  width:auto;
+                 }
+   
+    .cmenu a:hover {
+                    text-decoration:none;color: black; 
+                    background-image: url("highlightBG.png");
+                    background-repeat: repeat-x;
+                    display:block;
+                    padding:4px;
+                    padding-left: 30px;
+                    width:auto;
+                   }
+
+    .cmenu a:visited {
+                      text-decoration:none;
+                      color:#000000;
+                      padding:4px;
+                      width:auto;
+                      padding-left: 30px;
+                      display:block;
+                     }
+
+    .cmenu a:active {
+                     text-decoration:none;
+                     color:#000000;
+                     padding:4px;
+                     width:auto;
+                     padding-left: 30px;
+                     display:block;
+                    }
+
+    .cmenu .topSep { 
+                    margin-top: 0.3em; 
+                    padding-top: 0.3em;
+                    background-image: url("separator.png");
+                    background-repeat: repeat-x;
+
+                   } 
+
+   #divContext {
+                background-image: url("sidesep.png");
+                background-repeat: repeat-y;
+                background-position: 0px 25px;
+
+                 -ms-filter: "progid:DXImageTransform.Microsoft.Shadow"(Strength=6, Direction=135, Color=, #000000);
+                     filter: "progid:DXImageTransform.Microsoft.Shadow"(Strength=6, Direction=135, Color=, #000000);
+                     filter: progid:DXImageTransform.Microsoft.dropShadow(color=#ABABAB, offX=2, offY=2, positive=true);
+
+               }
+
+   #separate {
+              background-image: url("separator.png");
+              background-repeat: repeat-x;
+             }
+
+   #sidesep {
+             float: left;
+             background-image: url("sidesep.png");
+             background-position: right-top;
+             background-repeat: repeat-y;
+            }

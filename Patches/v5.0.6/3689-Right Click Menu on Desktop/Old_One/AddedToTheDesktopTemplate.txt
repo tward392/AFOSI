@@ -1,0 +1,11 @@
+ <div id="divContext" style="border: 1px solid gray; display: none; position: absolute">
+  <ul class="cmenu">
+   <li><a id="aClone" href="#">Clone</a></li>
+   <li><a id="aKeepOnTop" href="#">Keep On Top of Recent Cache</a></li>
+   <li class=topSep><a id="aCancel" href="#">Cancel</a></li>
+  </ul>
+ </div>
+
+<link rel="stylesheet" href="#IMAGE_PREFIX#javascript/RightClickMenu.css" type="text/css" />
+<script type="text/javascript" src="#IMAGE_PREFIX#javascript/RightClickMenu.js"></script>
+
