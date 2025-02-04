@@ -1,0 +1,29 @@
+<html>
+<head>
+
+<link rel="stylesheet" type="text/css" href="code.css"  />
+<link rel="stylesheet" type="text/css" href="simpletip.css"  />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script src="jquery.simpletip-1.3.1.min.js"></script>
+</head>
+
+            <div class="dynamic">
+               <h2>Dynamic content</h2>
+               Data can be stored in an array and easily used to create tooltips with different content using a single jQuery selector.
+               <div class="sandbox">
+                  <div class="example dynamic-array">
+                     Content for <a>this tooltip</a> is different from <a>this</a> and <a>this</a>, but all are selected with the same jQuery selector!
+                     <code class="js">&nbsp;
+
+<span>// Setup a content array for the tooltips</span>
+var <var>arrayData</var> = [<var>'Content for tooltip 1'</var>, <var>'Content for tooltip 2'</var>, <var>'Content for tooltip 3'</var>];
+
+$(<var>"JQUERY SELECTOR"</var>).<dfn>each</dfn>(<dfn>function</dfn>(<var>i</var>){
+   $(<var>this</var>).<dfn>simpletip</dfn>({ content: <var>arrayData[</var>i<var>]</var> });
+});
+                     </code>
+
+                  </div>
+               </div>
+</html>
