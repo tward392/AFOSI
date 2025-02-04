@@ -1,0 +1,5 @@
+<script language="javascript">
+//var chkBox = document.getElementById('P820_ASSOCIATION_FILTER_0');
+//chkBox.disabled=true;
+//chkBox.checked=true;
+</script>

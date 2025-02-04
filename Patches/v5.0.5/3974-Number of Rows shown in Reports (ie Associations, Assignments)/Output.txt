@@ -1,0 +1,87 @@
+Function created.
+Function created.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: APP PROCESS 9883609096019187
+...application processes
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: APP PROCESS 9881630231750915
+...application processes
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: SHORTCUTS 9935621558753975
+...Shortcuts
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: REGION TEMPLATE 92560720055766143
+...region templates
+......region template 92560720055766143
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: REPORT TEMPLATE 179219067086554487
+...report templates
+......report template 179219067086554487
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: REPORT TEMPLATE 5228919666917120
+...report templates
+......report template 5228919666917120
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: REPORT TEMPLATE 1899530952156348
+...report templates
+......report template 1899530952156348
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 30455
+...PAGE 30455: Personnel Assigned Roles
+...done
