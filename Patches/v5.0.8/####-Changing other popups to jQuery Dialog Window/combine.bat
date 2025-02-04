@@ -1,0 +1,3 @@
+copy f100_componentsDesktop.sql+"f100_componentsNavigation Bar Entry.sql"+"f100_componentsObjects with Tabs and Menus.sql"+f100_page_10150.sql+f100_page_21125.sql+f100_page_22007.sql+f100_page_22210.sql+f100_page_30140.sql+f100_page_30430.sql+f100_page_30505.sql+f100_page_30510.sql+f100_page_30600.sql+f100_page_30605.sql+f100_page_30610.sql+f100_page_30700.sql+f100_page_30710.sql+f100_page_30715.sql+f100_page_30720.sql+f100_page_5600.sql+f100_page_750.sql+f100_page_760.sql+f100_page_765.sql+f100_page_775.sql+f100_page_780.sql+f100_page_950.sql+"999-Page Removals.sql" 002-ApexPagesAndTemplates.sql
+
+copy OSI_ASSOC-BODY_ONLY.SQL+OSI_EVIDENCE-SPEC_AND_BODY.SQL+OSI_MENU-BODY_ONLY.SQL+T_OSI_OBJ_TYPE.SQL+T_OSI_REPORT_TYPE.SQL 001-Packages.sql
