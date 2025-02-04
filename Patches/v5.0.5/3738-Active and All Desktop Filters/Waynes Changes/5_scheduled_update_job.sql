@@ -1,0 +1,23 @@
+DECLARE
+  X NUMBER;
+BEGIN
+  SYS.DBMS_JOB.SUBMIT
+  ( job       => X 
+   ,what      => 'begin
+OSI_ACT_LOOK_UPDATES.UP_TITLE;
+OSI_ACT_LOOK_UPDATES. UP_CONUNIT;
+OSI_ACT_LOOK_UPDATES. UP_LEAD;
+OSI_ACT_LOOK_UPDATES. UP_NOLEAD;
+OSI_ACT_LOOK_UPDATES. UP_LEADAGT;
+OSI_ACT_LOOK_UPDATES.UP_COMPDATE;
+OSI_ACT_LOOK_UPDATES.DEL_ACT;
+OSI_ACT_LOOK_UPDATES.ADD_ACT;
+end;'
+   ,next_date => to_date('29/12/2011 11:30:08','dd/mm/yyyy hh24:mi:ss')
+   ,interval  => 'SYSDATE+2/1440 '
+   ,no_parse  => FALSE
+  );
+  SYS.DBMS_OUTPUT.PUT_LINE('Job Number is: ' || to_char(x));
+COMMIT;
+END;
+/
