@@ -1,0 +1,107 @@
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: APP PROCESS 88895918473684379
+...application processes
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: APP PROCESS 16517810615441835
+...application processes
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 10150
+...PAGE 10150: File Associated Activities
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 20000
+...PAGE 20000: Activity Summary
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 21505
+...PAGE 21505: Records Check and Document Review Details
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 1010
+...PAGE 1010: Desktop Activities
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 840
+...PAGE 840: ROI Report for Case Files
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 845
+...PAGE 845: ROI Report Distribution for Case Files
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 850
+...PAGE 850: ROI Report Caveats for Case Files
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: APP PROCESS 16971208663165092
+...application processes
