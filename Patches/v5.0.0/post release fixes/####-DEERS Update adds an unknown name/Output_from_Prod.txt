@@ -1,0 +1,90 @@
+Table altered.
+Table altered.
+1 row created.
+Commit complete.
+Table created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+Commit complete.
+View created.
+View created.
+Package created.
+Package body created.
+Package created.
+Package body created.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+Component Export: APP PROCESS 3691812988366862
+...application processes
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+Component Export: APP PROCESS 3687431847727960
+...application processes
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 30005
+...PAGE 30005: Individual Title Info
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 30140
+...PAGE 30140: DEERS
+...done
