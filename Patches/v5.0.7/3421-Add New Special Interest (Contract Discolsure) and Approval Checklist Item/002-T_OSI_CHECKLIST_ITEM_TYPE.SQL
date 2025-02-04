@@ -1,0 +1,3 @@
+INSERT INTO T_OSI_CHECKLIST_ITEM_TYPE ( SID, TITLE, DESCRIPTION, VERIFY_PROC, DETAILS, CONTAINING_TAB, CREATE_BY, CREATE_ON, MODIFY_BY, MODIFY_ON, OBJ_TYPE ) VALUES ( '33318SY4', 'Contract Disclosure requires Agency File Number', 'Contract Disclosure requires Agency File Number', 'OSI_CHECKLIST.INV_CONTRACT_DISCLOSURE', 'Special Interest Area of "Contract Disclosure" Requires a Participant with an Agency File Number.', '22200000AJK', 'timothy.ward',  TO_Date( '07/12/2012 12:47:39 PM', 'MM/DD/YYYY HH:MI:SS AM'), 'timothy.ward',  TO_Date( '07/12/2012 12:49:24 PM', 'MM/DD/YYYY HH:MI:SS AM'), NULL); 
+COMMIT;
+

@@ -1,0 +1,32 @@
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: SHORTCUTS 14709022697512157
+...Shortcuts
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+Component Export: BUTTON TEMPLATE 13904225673632513
+...button templates
+......Button Template 13904225673632513
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 5050
+...PAGE 5050: Notes
+...done

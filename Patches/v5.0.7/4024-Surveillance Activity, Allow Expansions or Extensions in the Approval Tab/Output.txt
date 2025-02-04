@@ -1,0 +1,47 @@
+1 row created.
+1 row created.
+1 row created.
+Commit complete.
+Table created.
+Index created.
+Table altered.
+Table altered.
+Table altered.
+Grant complete.
+Trigger created.
+303 rows created.
+Commit complete.
+Trigger created.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 22505
+...PAGE 22505: Surveillance Activity (Request Information)
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 22510
+...PAGE 22510: Surveillance Activity (Intercept Information)
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 22515
+...PAGE 22515: Surveillance Activity (Approval)
+...done

@@ -1,0 +1,23 @@
+1 row created.
+Commit complete.
+Table created.
+Index created.
+Index created.
+Trigger created.
+No errors.
+Trigger created.
+No errors.
+Table altered.
+Table altered.
+Grant complete.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 22520
+...PAGE 22520: Surveillance Activity (Persons Briefed)
+...done
