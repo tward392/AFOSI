@@ -1,0 +1,59 @@
+Synonym created.
+Synonym created.
+Synonym created.
+Synonym created.
+Synonym created.
+Commit complete.
+Package body created.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 1350
+...PAGE 1350: Desktop Sources
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 11300
+...PAGE 11300: Source (Create)
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 11315
+...PAGE 11315: Source Bio Information
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 11330
+...PAGE 11330: Source Approval Search
+...done
