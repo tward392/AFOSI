@@ -1,0 +1,2 @@
+UPDATE T_OSI_REFERENCE SET DESCRIPTION='Air Force Materiel Command' WHERE DESCRIPTION='Air Force Material Command';
+COMMIT;

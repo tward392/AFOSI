@@ -1,0 +1,98 @@
+body {
+	color:#000;
+	font: small/1.5 Verdana, sans-serif;
+	margin: 0 0 6em;
+}
+h1, h2, h3 {
+	margin:2.5em 0 0 0;
+}
+h1 {
+	color: #13a;
+	font-size: 300%;
+	margin-top:1em;
+}
+h1 small {
+	color:#000;
+	font-size: small;
+	font-weight: normal;
+}
+h2 {
+	margin-top:2em;
+}
+h3 {
+	color: #13a;
+	clear: both;
+	margin:0 0 -.5em;
+	padding-top:1.5em;
+}
+p {
+	margin:1em 0;
+	padding:0;
+}
+ul {
+	list-style: disc;
+	margin:1em 0;
+	padding-left: 1.3em;
+}
+pre {
+	background:#eee;
+	border:6px double #fff;
+	margin:0 0 1em;
+	padding:1em 2em;
+	font-size: 100%;
+}
+li pre {
+	margin:1em 0;
+}
+code {
+	font-size: 100%;
+}
+img {
+	border: none;
+}
+a:link, a:visited {
+	color:#0067EB;
+}
+a:focus, a:hover, a:active {
+	text-decoration: none;
+}
+div {
+	clear:both;
+	margin:0;
+}
+p {
+	clear:both;
+}
+#wrap {
+	margin:0 12%;
+	min-width: 50em;
+}
+#footer {
+	padding-top: 3em;
+	text-align: center;
+}
+.contentMenu {
+	background: #DFE3F2 url(../i/arrows.gif) no-repeat -1px 1.75em;
+	border:6px double #fff;
+	border-right:none;
+	height:11.5em;
+	right:0;
+	padding:1.5em 1em 1.5em 2em;
+	position:fixed;
+	top:3.5em;
+	width:17em;
+}
+.contentMenu h4 {
+	color: #13a;
+	margin:0;
+}
+.contentMenu ul, .contentMenu ol {
+	list-style-position:inside;
+	margin:.5em 0;
+	padding:0;
+}
+
+/* quick hack for IE */
+div {
+	height:1%;
+}

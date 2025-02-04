@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+	<head>
+		<title>Supposition - an enhancement module for Superfish</title>
+		<meta name="description" content="A demonstration of Supposition &#8211; a jQuery plugin that adds functionality to the Superfish plugin.">
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<link rel="stylesheet" type="text/css" href="css/demo.css" media="screen">
+		<link rel="stylesheet" type="text/css" href="css/superfish.css" media="screen">
+		<script type="text/javascript" src="js/jquery-1.2.2.js"></script>
+		<script type="text/javascript" src="js/helperPlugins.js"></script>
+		<script type="text/javascript" src="js/superfish.1.4.1.js"></script>
+		<script type="text/javascript" src="js/supposition.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			$(".nav").superfish().supposition();
+		});
+		</script>
+	</head>
+	<body id="home">
+		<div id="wrap">
+			<h1>Supposition alpha<small> by Jesse Klaasse and Joel Birch</small></h1>
+			<h2>A work-in-progress demonstration of optional new functionality added to Superfish via a new plugin-plugin that might end up being called &#8220;Supposition&#8221;.</h2>
+			<p>This experimental version of Superfish (it may become Superfish version 1.4) provides more optional callbacks to allow further functionality to be added without altering the established Superfish codebase. <strong>Jesse Klaasse</strong> requested new Superfish functionality in order to relocate submenus when they would otherwise appear outside the browser window area. Soon after this request he actually provided an altered version of Superfish that achieved this (huge thanks Jesse).</p>
+			<p>My concern with adding new functionality to Superfish is that the code is currently challenging enough for me to maintain and offer support for. With this in mind I attempted to extract Jesse&#8217;s new functionality into it&#8217;s own module so that the only new code needed in the existing Superfish plugin was more optional callbacks so the new module, called &#8220;Supposition&#8221; (actually, this name sucks&#8230; I&#8217;m definitely going to change it) can hook into it and fire it&#8217;s own code in the right places.</p>
+			<p>I&#8217;m open to opinions on whether this is a good idea or whether I may just be over-complicating things. Here is how this could work:</p>
+			<ul>
+				<li>Include the jQuery v1.2.1</li>
+				<li>Include the Superfish plugin</li>
+				<li>Include the Supposition plugin-plugin</li>
+				<li>Initialise Superfish in the usual way <em>plus</em> hook up the new optional callback functions to the pre-made functions provided by the Supposition plugin (as shown in the code block below).</li>
+			</ul>
+			<p>The demo on this page exhibits a bug that we need to resolve regarding the top offset of the submenus being calculated incorrectly when the menu is far enough down the document to require scrolling to see it, but you can <a href="menuAtTop.html">click here for a working demo</a> to see how it works when the menu is near the top of the document. If you test the menu with a narrow or shallow browser window (tight against the menu) the submenus will reposition themselves horizontally and/or vertically in an attempt to remain within the viewport.</p>
+			<p>Jesse, the glitches you noticed in your experiments can be mostly solved by altering the CSS in two places:</p>
+			<ul>
+				<li>increase the width value for <code>.nav ul</code> slightly (0.15em in my case) to account for the borders of the list items. This will prevent the &#8220;borders redrawing&#8221; thing. Also, note that the issue with having to +1 (or whatever border width the user is using) to the horizontal offset goes away once we correct the <code>.nav ul</code> width to account for the border width of the list items, which is great as we don&#8217;t need to worry about how to pass in that extra value to the positioning code!</li>
+				<li>experiment with altering the vertical padding for <code>.nav a</code>. I changed mine from .75em to .77em top and bottom. This stopped the text from jumping down by a pixel after the animation has completed. All it is doing is making it fit with Firefox&#8217;s hypothetical pixel grid for text that I proposed might exist previously in our discussions. However, if the user then scales up the text size, this tweaking no longer helps, but at least we can workaround the problem for the default text size in this way.</li>
+			</ul>
+			<h3 id="example">Demonstration:</h3>
+			<p>Here is a demonstration of a Superfish menu with the optional Supposition plugin hooked into it. Note that the submenus appear way up the page at the moment due to an unresolved bug. To see how the menu should really work, <a href="menuAtTop.html">see this demo instead</a>.</p>
+			<pre><code>$(document).ready(function(){
+	$(".nav").superfish({
+		animation	: { opacity:'show' }, /*also works with 'height' etc.*/
+		onInit		: $.supposition.onInit,
+		onBeforeShow	: $.supposition.onBeforeShow,
+		onHide		: $.supposition.onHide
+	});
+});</code></pre>
+			<ul class="nav">
+				<li class="current">
+					<a href="#a">menu item &#8595;</a>
+					<ul>
+						<li>
+							<a href="#aa">menu item</a>
+						</li>
+						<li class="current">
+							<a href="#ab">menu item &#8594;</a>
+							<ul>
+								<li class="current"><a href="#">menu item</a></li>
+								<li><a href="#aba">menu item</a></li>
+								<li><a href="#abb">menu item</a></li>
+								<li><a href="#abc">menu item</a></li>
+								<li><a href="#abd">menu item</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#">menu item &#8594;</a>
+							<ul>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#">menu item &#8594;</a>
+							<ul>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">menu item</a>
+				</li>
+				<li>
+					<a href="#">menu item &#8595;</a>
+					<ul>
+						<li>
+							<a href="#">menu item &#8594;</a>
+							<ul>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#">menu item &#8594;</a>
+							<ul>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#">menu item &#8594;</a>
+							<ul>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#">menu item &#8594;</a>
+							<ul>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#">menu item &#8594;</a>
+							<ul>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+								<li><a href="#">menu item</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">menu item</a>
+				</li>	
+			</ul>
+			<h3 id="issues">Unresolved issues:</h3>
+			<p>There are things that need attention:</p>
+			<ul>
+				<li>Here&#8217;s a biggie: menus that appear low enough on the page to require scrolling down to see them do not offset the submenus correctly. Currently they appear way up the page! I have commented the likely culprit in the code and I hope Jesse or someone else who understands the positioning functions better than I can shed light on this.</li>
+				<li>The z-index code needs fixing as there are still issues as discussed by Jesse on the jQuery Google Group.</li>
+				<li>The text-jog glitch that I resolved has come back due to the fact that I inserted content above the demo menu on this page, so I would have to tweak those padding values again to resolve this. I think I&#8217;ll leave that for now as this is just a demo and is liable to change again, requiring further tweaking.</li>
+				<li>I removed the extra functionality Jesse added to display an arrow to indicate menu items that contain submenus. I think it would be better to make this into it&#8217;s own plugin which could then be applied to any suckerfish menu, not just Superfish.</li>
+				<li>Currently only tested on Firefox. Other browser testing can come later.</li>
+			</ul>
+			<h3 id="download">Download:</h3>
+			<p>Please <a href="supposition-test.zip">download the files</a> used for this page and help me figure out the submenu vertical offset issue.</p>
+			<div id="footer">
+				<a href="http://jquery.com/"><img src="img/jQuery-logo.gif" alt="jQuery - write less. do more."></a>
+			</div>
+		</div>
+	</body>
+</html>
