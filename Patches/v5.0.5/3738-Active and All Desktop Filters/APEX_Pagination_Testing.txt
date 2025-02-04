@@ -1,0 +1,151 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ADD ANYTHING NEEDED TO OSI_OBJECT.is_object_active:
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ADD TO osi_desktop.desktop????sql:
+
+         IF ACTIVE_FILTER='ACTIVE' THEN
+
+           SQLString := SQLString || vCRLF ||
+                        '    AND OSI_OBJECT.IS_OBJECT_ACTIVE(O.SID)=''Y''';
+                        
+         END IF;
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+NEW PARAMETERS TO APPLCIATION PROCESS DESKTOP_FILTERS_SQL:
+ get.addParam('x06',$v('P1010_ACTIVE_FILTER'));  // Active Filter (Active/All)
+ get.addParam('x07',$v('apexir_NUM_ROWS'));      // Rows Per Page
+ get.addParam('x08','P1010');                    // Page Identifier
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Page HEADER:
+<script type="text/javascript">
+function goto_first_page()
+{
+gReport.navigate.paginate('pgR_min_row=1max_rows='+$v('apexir_NUM_ROWS')+'rows_fetched='+$v('apexir_NUM_ROWS'));
+}
+</script>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Page FOOTER:
+<script type="text/javascript">
+$(window).load(function(){  
+
+  var t = setTimeout("goto_first_page();", 500);
+
+});
+</script>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+HTML HEADER:
+  $(function()
+   {
+    maxval = $v('P1010_NUM_ROWS');
+    $('option', '#apexir_NUM_ROWS').each(function(i, item)
+     {
+      if ( parseInt(item.value) == maxval)
+        item.selected=true;
+     });
+  });
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+NEW LIST OF VALUES ON THE SCREEN USING DESKTOP_FILTER_ACTIVE LOV
+P1010_ACTIVE_FILTER
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+NEW ITEM:
+P1010_NUM_ROWS
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+NEW COMPUTATIONS:
+P1010_ACTIVE_FILTER=ACTIVE
+
+P1010_NUM_ROWS=
+osi_personnel.get_user_setting(:user_sid,
+                               'P' || :APP_PAGE_ID || '_NUM_ROWS',
+                               '25');
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ADD FOLLOWING TO DESKTOP FILTERS DEFAULT:
+   :P1010_FILTER := osi_personnel.get_user_setting(:user_sid,
+                                                   'P' || :APP_PAGE_ID || '_FILTER',
+                                                   'RECENT');
+
+   :P1010_ACTIVE_FILTER := osi_personnel.get_user_setting(:user_sid,
+                                                          'P' || :APP_PAGE_ID || '_ACTIVE_FILTER',
+                                                          'ACTIVE');
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+NOT USED YET:
+
+///ATTEMPT TO REPLACE THE PAGINATION ICONS////
+var test=$('#apexir_DATA_PANEL').find('td.pagination').html();
+test = test.replace('<span class="fielddata">','<span class="fielddata"><img id="first_page" align="absmiddle" alt="Goto First Page" title="Goto First Page" src="#IMAGE_PREFIX#srmvall.gif" onclick="gReport.navigate.paginate(\'pgR_min_row=1max_rows=\'+$v(\'apexir_NUM_ROWS\')+\'rows_fetched=\'+$v(\'apexir_NUM_ROWS\'))" />');
+test = test.replace('</span>','<img id="last_page"  align="absmiddle" alt="Goto Last Page" title="Goto Last Page" src="#IMAGE_PREFIX#smvall.gif" onclick="gReport.navigate.paginate(\'pgR_min_row=\'+RetMinRow()+\'max_rows=\'+$v(\'apexir_NUM_ROWS\')+\'rows_fetched=\'+$v(\'apexir_NUM_ROWS\'))" /></span>');
+$('#apexir_DATA_PANEL').find('td.pagination').html(test);
+
+
+<div id="first_last">
+ <table>
+  <tr>
+   <td style="cursor:pointer;cursor:hand">
+    <img id="first_page" align="absmiddle" alt="Goto First Page" title="Goto First Page" src="#IMAGE_PREFIX#srmvall.gif" onclick="gReport.navigate.paginate('pgR_min_row=1max_rows='+$v('apexir_NUM_ROWS')+'rows_fetched='+$v('apexir_NUM_ROWS'))" />
+   </td>
+   <td style="cursor:pointer;cursor:hand">
+    <img id="last_page"  align="absmiddle" alt="Goto Last Page" title="Goto Last Page" src="#IMAGE_PREFIX#smvall.gif" onclick="gReport.navigate.paginate('pgR_min_row='+RetMinRow()+'max_rows='+$v('apexir_NUM_ROWS')+'rows_fetched='+$v('apexir_NUM_ROWS'))" />
+   </td>
+  </tr>
+ </table>
+</div>
+
+<script type="text/javascript">
+function htmldbIrtPagination(pRet)
+{
+ var p=$.trim($('#apexir_DATA_PANEL').find('td.pagination').find('span.fielddata').text());
+ var a=new Array();var n=new Array();a=p.split(' ');
+ $.each(a,function(i,v){if(!isNaN(v)){n.push(v)}});
+ n.push($v('apexir_NUM_ROWS')*1);
+ switch(pRet)
+       {
+        case 'first':return n[0];
+        case 'last':return n[1];
+        case 'max':return n[2];
+        case 'show':return n[3];
+        default:return n
+       }
+}
+
+function RetMinRow()
+{
+ var lS=$v('apexir_NUM_ROWS')*1;
+ var lM=htmldbIrtPagination('max')*1;
+ var lN=lM*1/lS*1;
+ lN=Math.floor(lN*1);
+ if(lN*1>1)
+   {
+    lN=lN*1*lS*1+1;
+    if(lN*1>lM*1)
+      {
+       lN=lN*1-lS*1;
+      }
+   }
+ else
+   {
+    lN=lM*1;
+   }
+
+ return lN;
+}
+
+</script>
+
+ document.getElementByID("first_page").click;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+

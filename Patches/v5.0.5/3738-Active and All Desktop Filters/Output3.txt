@@ -1,0 +1,18 @@
+Package created.
+Package body created.
+Table created.
+Index created.
+Package created.
+Package body created.
+Trigger created.
+Job Number is: 107
+PL/SQL procedure successfully completed.
+Package created.
+Package body created.
+Package created.
+Package body created.
+Package created.
+Package body created.
+View created.
+Package body created.
+Trigger created.
