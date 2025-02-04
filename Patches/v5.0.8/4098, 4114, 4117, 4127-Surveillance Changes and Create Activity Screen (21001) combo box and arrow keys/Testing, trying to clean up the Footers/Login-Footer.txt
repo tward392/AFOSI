@@ -1,0 +1,16 @@
+#FORM_CLOSE#
+<script type="text/javascript">
+   function mySubmit(request, t)
+   { 
+    $(t).hide();
+   }
+</script>
+</body>
+<script type="text/javascript">
+$(document).ready(function() 
+{
+ $("div.tooltip").tipsy({live: true, fade: true, gravity: "n", title: "tip"});
+});
+</script>
+</html>
+

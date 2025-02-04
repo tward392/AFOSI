@@ -1,0 +1,217 @@
+#FORM_CLOSE#
+
+<script language="JavaScript" type="text/javascript">
+
+   var version = getInternetExplorerVersion();
+
+   function checkDirty(){
+      return (/\:&APP_PAGE_ID./.test($v('P0_DIRTY')));
+   }
+
+   /*TMH 11/24 unused due to change in setDirty function*/
+   function checkWritable(){
+      return ($v('P0_WRITABLE'));
+   }
+
+   function checkDirtable() {
+      var anchors = document.getElementsByTagName('a');
+      for (var i = 0;i<anchors.length;i++){
+         if ((/SAVE/.test(anchors[i].href)) ||
+            (/CREATE/.test(anchors[i].href))) {
+            return true;
+         }
+      }
+      return false;   
+   }
+
+   function highlightSave() {
+      var anchors = document.getElementsByTagName('a');
+      for (var i = 0;i<anchors.length;i++){
+         if ((/SAVE/.test(anchors[i].href)) ||
+            (/CREATE/.test(anchors[i].href))) {
+            anchors[i].style.color = 'red';
+            return true;
+         }
+      }
+      return false;   
+   }
+
+   function setDirty() {
+      if (highlightSave()) {      
+          document.getElementById('P0_DIRTY').value+=':&APP_PAGE_ID.';
+      }
+   }
+
+   function clearDirty() {
+      document.getElementById('P0_DIRTY').value =
+      document.getElementById('P0_DIRTY').value.replace(/\:&APP_PAGE_ID./g, '');
+      //doSubmit('CLEAR_DIRTY');
+      document.getElementById('P0_DIRTABLE').value =
+      document.getElementById('P0_DIRTABLE').value.replace(/\Y/g, 'N');
+
+   }
+
+   function setPopup() {
+      isPopup = true;
+   }
+
+
+   function onUnload(){
+      //alert("Dirty Page: " + checkDirty());
+      if (checkDirty()){
+         clearDirty();
+      }
+   }
+
+   // Main
+   if (checkDirty()) {
+      highlightSave();
+   }
+   /*TMH 03-04: Test to prevent application process from setting dirty to a page that isn't dirty */
+   if (checkDirtable()) {
+      document.getElementById('P0_DIRTABLE').value='Y';
+   }
+
+   function goAway(){
+      var imSure = true;
+      if (checkDirty()){
+         var msg = 'This action will cause all unsaved changes to be lost.  ' +
+                   'Click OK to return to the page and save changes before proceeding.';
+         imSure = confirm(msg);
+      }
+      else{
+         return true;
+      }
+      if (imSure){
+         return false;
+      }
+   }
+   
+   // TJW - 28-Dec-2011, Added the Version Check because FireFox uses addEventListner and IE uses attachEvent //
+   //                    so Firefox would never get the goAway Message.                                       //
+   var inputs, selects, textAreas, anchors;
+   inputs = document.getElementsByTagName('input');
+   selects = document.getElementsByTagName('select');
+   textAreas = document.getElementsByTagName('textarea');
+   anchors = document.getElementsByTagName('a');
+
+   for(var i=0; i<anchors.length; i++)
+      {
+       if (/popup/i.test(anchors[i].href))
+         {
+          if (version == -1)
+            anchors[i].addEventListener('onclick',setPopup,false);
+          else
+            anchors[i].attachEvent('onclick',setPopup);
+         }
+       else if (/EDIT_/i.test(anchors[i].href))
+           {
+            if (version == -1)
+              anchors[i].addEventListener('onclick',goAway,false);
+            else
+              anchors[i].attachEvent('onclick',goAway);
+           }
+       else if (/ADD/i.test(anchors[i].href))
+           {
+            if (version == -1)
+              anchors[i].addEventListener('onclick',goAway,false);
+            else
+              anchors[i].attachEvent('onclick',goAway);
+           }
+      }
+
+   for(var i=0; i<inputs.length; i++)
+      {
+       if ((inputs[i].type=='checkbox' && !(/f[0-9]+/.test(inputs[i].name))) || (inputs[i].type=='radio'))
+         {
+          if (version == -1)
+            inputs[i].addEventListener('onchange',setDirty,false);
+          else
+            inputs[i].attachEvent('onchange',setDirty);
+         }
+
+       if (inputs[i].type=='text')
+         $(inputs[i]).change(function() {setDirty(); });
+      } 
+
+   for(var i=0; i<selects.length; i++)
+      {
+       if (version == -1)
+         selects[i].addEventListener('onchange',setDirty,false);
+       else
+         selects[i].attachEvent('onchange',setDirty); 
+      }
+
+   for(var i=0; i<textAreas.length; i++)
+      {
+       if (version == -1)
+         textAreas[i].addEventListener('onchange',setDirty,false);
+       else
+         textAreas[i].attachEvent('onchange',setDirty);
+      }
+
+   window.onbeforeunload = onUnload;
+   function mySubmit(request, t)
+   { 
+    if(request == '&BTN_SAVE.' || request == '&BTN_DELETE.' || request == '&BTN_CANCEL.')
+      clearDirty();
+
+    if(request.substring(0,6).toUpperCase() !== 'DELETE')
+      $(t).hide();
+   }
+
+   function mySubmitSafe(request){ 
+       if (request == '&BTN_SAVE.' ||
+           request == '&BTN_DELETE.' ||
+           request == '&BTN_CANCEL.')
+           clearDirty();
+
+       if (request == 'Add Participant'        
+           && (checkDirty())){
+           alert('You must save before you can perform this action.');
+           return false;
+       }
+
+       if (request == 'Create New Individual'        
+           && (checkDirty())) {
+           alert('You must save before you can perform this action.');
+           return false;
+       }
+
+/*
+       if (request == 'Create Participant'        
+           && checkDirty()) {
+           alert('You must save before you can perform this action.');
+           return false;
+       }
+*/
+   }
+
+
+   function goToTab(pSid, pObj)
+   {
+      var imSure = false;
+
+      if (checkDirty())
+        {
+         var msg = 'Leaving this tab will cause all unsaved changes to be lost.  ' +
+                   'Click OK to return to the page and save changes before proceeding.';
+         imSure = confirm(msg);
+        }
+      if (!imSure)
+        {
+         if ( pObj === undefined )
+           doSubmit('TAB_'+pSid);
+         else
+           doSubmit('TAB_'+pSid+'_'+pObj);
+        }
+   }
+
+   $(document).ready(function() 
+    {
+     $("div.tooltip").tipsy({live: true, fade: true, gravity: "n", title: "tip"});
+    });
+</script>
+</body>
+</html>
+

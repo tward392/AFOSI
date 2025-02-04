@@ -1,0 +1,12 @@
+1 row updated.
+Commit complete.
+1 row updated.
+Commit complete.
+1 row updated.
+Commit complete.
+Table altered.
+1 row created.
+Commit complete.
+View created.
+Trigger created.
+Commit complete.

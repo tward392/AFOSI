@@ -1,0 +1,10 @@
+#FORM_CLOSE#
+</body>
+<script type="text/javascript">
+$(document).ready(function() 
+{
+ initNav();
+ $("div.tooltip").tipsy({live: true, fade: true, gravity: "n", title: "tip"});
+});
+</script>
+</html>

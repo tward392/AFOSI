@@ -1,0 +1,110 @@
+<br />
+#FORM_CLOSE# 
+<script language="JavaScript" type="text/javascript">
+
+   var version = getInternetExplorerVersion();
+   
+   function checkDirty(){
+      return (/\:&APP_PAGE_ID./.test(document.getElementById('P0_DIRTY').value));
+   }
+
+   function highlightSave() {
+      var anchors = document.getElementsByTagName('a');
+      for (var i = 0;i<anchors.length;i++){
+         if ((/SAVE/.test(anchors[i].href)) ||
+            (/CREATE/.test(anchors[i].href)))
+            anchors[i].style.color = 'red';
+      }   
+   }
+
+   function setDirty() {
+      document.getElementById('P0_DIRTY').value+=':&APP_PAGE_ID.';
+      highlightSave();
+   }
+
+   function clearDirty() {
+      document.getElementById('P0_DIRTY').value =
+      document.getElementById('P0_DIRTY').value.replace(/\:&APP_PAGE_ID./g, '');
+   }
+
+   function setPopup() {
+      isPopup = true;
+   }
+   function onUnload(){
+      if (checkDirty()){
+         clearDirty();
+      }
+   }
+
+   // Main
+   if (checkDirty()) {
+      highlightSave();
+   }
+
+   // TJW - 28-Dec-2011, Added the Version Check because FireFox uses addEventListner and IE uses attachEvent //
+   //                    so Firefox would never get the goAway Message.                                       //
+   var inputs, selects, textAreas, anchors;
+   inputs = document.getElementsByTagName('input');
+   selects = document.getElementsByTagName('select');
+   textAreas = document.getElementsByTagName('textarea');
+   anchors = document.getElementsByTagName('a');
+
+   for(var i=0; i<anchors.length; i++)
+      {
+       if (/popup/i.test(anchors[i].href))
+         {
+          if(version==-1)
+            anchors[i].addEventListener('onclick',setPopup,false);
+          else
+            anchors[i].attachEvent('onclick',setPopup);
+         }
+      }
+
+   for(var i=0; i<inputs.length; i++)
+      {
+       if ((inputs[i].type=='checkbox' && !(/f[0-9]+/.test(inputs[i].name))) || (inputs[i].type=='radio'))
+         {
+          if(version==-1)
+            inputs[i].addEventListener('onchange',setDirty,false);
+          else
+            inputs[i].attachEvent('onchange',setDirty);
+         }
+
+       if (inputs[i].type=='text')
+         $(inputs[i]).change(function() {setDirty();});
+      }
+
+   for(var i=0; i<selects.length; i++)
+      {
+       if(version==-1)
+         selects[i].addEventListener('onchange',setDirty,false);
+       else
+         selects[i].attachEvent('onchange',setDirty);
+      }
+
+   for(var i=0; i<textAreas.length; i++)
+      {
+       if(version==-1)
+         textAreas[i].addEventListener('onchange',setDirty,false);
+       else
+         textAreas[i].attachEvent('onchange',setDirty);
+      }
+
+   window.onbeforeunload = onUnload;
+   function mySubmit(request, t)
+   { 
+    if(request == '&BTN_SAVE.' || request == '&BTN_DELETE.' || request == '&BTN_CANCEL.')
+      clearDirty();
+
+    if(request.substring(0,6).toUpperCase() !== 'DELETE')
+      $(t).hide();
+   }
+
+   $(document).ready(function() 
+    {
+     $("div.tooltip").tipsy({live: true, fade: true, gravity: "n", title: "tip"});
+    });
+</script>
+
+</body>
+</html>
