@@ -1,0 +1,8 @@
+/* Align the Calendar Image better */
+.ui-datepicker-trigger
+{
+ margin-left : 2px;
+ vertical-align : bottom;
+ cursor: pointer;
+}
+

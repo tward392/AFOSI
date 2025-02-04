@@ -1,0 +1,125 @@
+<script type="text/javascript" src="#IMAGE_PREFIX#jQuery/jquery-datetimepicker.js"></script>
+<link href="#IMAGE_PREFIX#jquery/jquery-datetimepicker-extras.css" type="text/css" rel="stylesheet" />
+
+
+
+
+<script src="#IMAGE_PREFIX#jquery/jquery-hoverhelp.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+$(document).ready(function () {
+     $(".datepicker > input[id]").datepicker();
+
+  $.datepicker.setDefaults({
+      dateFormat: 'dd-M-yy',
+      changeMonth: true,
+      changeYear: true,
+      closeText: 'Done',
+      showButtonPanel: true,
+      duration: 'slow',
+      prevText: 'Previous',
+      showOtherMonths: true,
+      selectOtherMonths: true,
+      dayNamesShort: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+      dayNamesMin: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+      constrainInput: true,
+      showOn: 'both',
+      buttonImage: '#IMAGE_PREFIX#CalendarR24.png',
+      buttonImageOnly: true,
+      buttonText: 'Calendar',
+      autoSize: true
+  });
+
+});
+
+$(function(){
+             // Remove Original Date Picker //
+             $("td.datepicker + td").remove();
+
+             // Add jQuery DatePicker to all DatePicker input fields not hidden //
+             $("td.datepicker > input[type!=hidden]").datepicker();
+            });
+
+$(document).ready(function()
+ {
+  var inputs = getElementsByClassName("datepickernew", "", document);
+    
+    for (var i=0;i<inputs.length;i++)
+       {
+        if (typeof inputs[i].type == "undefined")
+          {
+           inputs[i].className="datepickerdisabled";
+          }
+       }
+
+  $(".datepickernew").datepicker();
+
+  // Add a Today Link to each Date Picker //
+  $('input.datepickernew').datepicker().next('.ui-datepicker-trigger').after('<a href="#" class="pickToday"><img style="margen-left: 2px; vertical-align : bottom;" class="imgToday" src="#IMAGE_PREFIX#TodayR24.png" alt="Today" title="Today"></a>');
+  $('a.pickToday').click(function() {$(this).prev().prev('input.datepickernew').datepicker('setDate', new Date());});
+ });
+
+
+<!-- Align the Calendar Image better -->
+<style>
+.ui-datepicker-trigger
+{
+ margin-left : 2px;
+ vertical-align : bottom;
+ cursor: pointer;
+}
+</style>
+
+
+
+
+
+<script type="text/javascript">
+   var imgPrefix = '#IMAGE_PREFIX#';
+   var helpURL = '&HELP_URL.';
+   setGlobals("&APP_ID.","&SESSION.","&DEBUG.");
+</script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+ 
+   $(document).ready(function(){
+      var pageID = $('#pFlowId').val();
+
+ 
+      $('.hoverHelp').each( function(i) {
+            var $item = $(this);
+            var get = new htmldb_Get(null,pageID,'APPLICATION_PROCESS=ITEM_HELP',0);
+            get.add('TEMP_ITEM', $item.prop('for'));
+            $item.prop('rel', get.url());
+            $item.prop('relTitle', $item.html());
+            return true;
+      });
+ 
+      $('.hoverHelp').cluetip({
+         arrows: true,
+         titleAttribute: 'relTitle',
+         hoverIntent: {    
+            sensitivity: 2,
+            interval: 200,
+            timeout: 0
+          }
+      }); 
+
+      // -- Handle Help Button --
+      $('#apexir_ACTIONSMENU a[title="Help"]').prop({'href':'&HELP_URL.','target':'_blank'});
+   });
+ 
+//]]>
+</script>
