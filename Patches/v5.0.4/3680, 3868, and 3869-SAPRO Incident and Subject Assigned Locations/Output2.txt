@@ -1,0 +1,10 @@
+Table altered.
+Table altered.
+Table altered.
+Table altered.
+Table altered.
+Table altered.
+View created.
+Trigger created.
+Package created.
+Package body created.
