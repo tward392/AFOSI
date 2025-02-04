@@ -1,0 +1,2 @@
+INSERT INTO T_CORE_CONFIG ( SID, CODE, SETTING, DESCRIPTION, CREATE_BY, CREATE_ON, MODIFY_BY, MODIFY_ON ) VALUES ( '333162OO', 'CORE.BASE_URL', 'https://hqcuiwebi2ms.ogn.af.mil:4443/pls/apex/i2ms/pSid/', NULL, 'timothy.ward',  TO_Date( '03/14/2011 10:04:23 AM', 'MM/DD/YYYY HH:MI:SS AM'), 'timothy.ward',  TO_Date( '03/14/2011 10:04:23 AM', 'MM/DD/YYYY HH:MI:SS AM')); 
+COMMIT;

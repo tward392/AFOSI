@@ -1,0 +1,6 @@
+select   paragraph_number || ' - ' || content display_value,
+         paragraph_number return_value
+    from t_cfunds_paragraphs
+   where active = 'Y'
+      or paragraph_number = :p30505_paragraph
+order by 1
