@@ -1,0 +1,12 @@
+Overall Object Classification:
+javascript:newWindow({page:765,clear_cache:'765',name:'&P0_OBJ._CLASSIFICATION',item_names:'P0_OBJ,P0_OBJ_CONTEXT,P765_OBJ,P765_CONTEXT',item_values:'&P0_OBJ.,,&P0_OBJ.,',request:'CLASSIFICATION'})
+<a class="htmlExportButton" onClick="javascript:newWindow({page:765,clear_cache:'765',name:'&P0_OBJ._CLASSIFICATION',item_names:'P0_OBJ,P0_OBJ_CONTEXT,P765_OBJ,P765_CONTEXT',item_values:'&P0_OBJ.,,&P0_OBJ.,',request:'CLASSIFICATION'});">Classify</a>
+
+Title Classificaiton:
+javascript:newWindow({page:765,clear_cache:'765',name:'&P0_OBJ._CLASSIFICATION',item_names:'P0_OBJ,P0_OBJ_CONTEXT,P765_OBJ,P765_CONTEXT',item_values:'&P0_OBJ.,,&P0_OBJ.,TITLE',request:'CLASSIFICATION'})
+<a class="htmlExportButton" onClick="javascript:newWindow({page:765,clear_cache:'765',name:'&P0_OBJ._CLASSIFICATION',item_names:'P0_OBJ,P0_OBJ_CONTEXT,P765_OBJ,P765_CONTEXT',item_values:'&P0_OBJ.,,&P0_OBJ.,TITLE',request:'CLASSIFICATION'});">Classify</a>
+
+
+Make Sure to make buttons conditional:
+
+CORE_UTIL.GET_CONFIG('OSI.ALLOW_CLASSIFICATIONS')='Y'
