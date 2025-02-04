@@ -1,0 +1,73 @@
+1 row created.
+Commit complete.
+1 row created.
+Commit complete.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+Component Export: LIST 97994415302351721
+...lists
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 0
+...PAGE 0: Page Zero
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 800
+...PAGE 800: Autorun Reports
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 30505
+...PAGE 30505: CFunds Expense
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 30600
+...PAGE 30600: CFunds Advance
+...done
+Package created.
+Package body created.
+Package created.
+Package body created.
+Package body created.
