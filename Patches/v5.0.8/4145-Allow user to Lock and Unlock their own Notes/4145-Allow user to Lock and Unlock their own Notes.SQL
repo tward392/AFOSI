@@ -1,0 +1,2825 @@
+set define off;
+
+
+CREATE OR REPLACE package body osi_note as
+/**
+ * Air Force - Office Of Special Investigation
+ *    _____  ___________________    _________.___
+ *   /  _  \ \_   _____/\_____  \  /   _____/|   |
+ *  /  /_\  \ |    __)   /   |   \ \_____  \ |   |
+ * /    |    \|     \   /    |    \/        \|   |
+ * \____|__  /\___  /   \_______  /_______  /|___|
+ *         \/     \/            \/        \/
+ *  Investigative Information Management System
+ *  .___________    _____    _________
+ *  |   \_____  \  /     \  /   _____/
+ *  |   |/  ____/ /  \ /  \ \_____  \
+ *  |   /       \/    Y    \/        \
+ *  |___\_______ \____|__  /_______  /
+ *              \/       \/        \/
+ *  Notes Common Object - Support Class
+ *
+ * @author - Richard Norman Dibble
+ /******************************************************************************
+   NAME:       OSI_NOTE
+   PURPOSE:    Supports the Notes Common Object in WebI2MS.
+
+   REVISIONS:
+   Date        Author           Description
+   ----------  ---------------  ------------------------------------
+    22-apr-2009  Richard Dibble  Created this package
+    04-May-2009  Richard Dibble  Added ADD_NOTE and GET_STATUS_NOTE_TYPE
+    17-Jun-2009  Tim McGuffin    Modified package to reference non-core note tables.
+    17-Jun-2009  Tim McGuffin    Modified get_note_type to handle inheritance.
+    09-Feb-2010  Richard Dibble  Changed add_note to a function, added update_note
+    12-May-2010  Jason Faris     Added LATEST_NOTE
+    14-Sep-2010  Richard Dibble  Modified get_note_status to check the lock mode of 
+                                 the note, not the note type
+    09-Nov-2012  Tim Ward        CR#4145 - Allow Locking/Unlocking of Notes by Users.
+                                  Changed get_note_status.                                 
+******************************************************************************/
+    c_pipe   varchar2(100) := core_util.get_config('CORE.PIPE_PREFIX') || 'OSI_note';
+
+    procedure log_error(p_msg in varchar2) is
+    begin
+        core_logger.log_it(c_pipe, p_msg);
+    end log_error;
+
+    /* Returns the status of the note in question */
+    function get_note_status(p_sid in varchar2)
+        return varchar2 is
+        v_note_lock_mode       t_osi_note_type.lock_mode%type;
+        v_note_last_mod_date   date;
+    begin
+        --Grab the Lock Mode setting for this particular note
+        select n.lock_mode, n.modify_on
+          into v_note_lock_mode, v_note_last_mod_date
+          from t_osi_note n
+         where n.sid = p_sid;
+
+        --Now check for the lock mode. (This will probably need to be more robust later,
+        --it has been simplified for now because the only current lock modes that OSI uses
+        --are 72HR, NEVER and IMMED
+
+        --If the lock mode is NEVER, then we can just pass through
+        if (v_note_lock_mode = 'NEVER') then
+            return 'Open';
+        end if;
+
+        --If the lock mode is 72HR, we have to calculte whether or not we are past the editable threshhold
+        if (v_note_lock_mode = '72HR') then
+            if (v_note_last_mod_date + 3 < sysdate) then
+                return 'Locked';
+            else
+                return 'Open';
+            end if;
+        end if;
+
+        --If the note is IMMED locked, then it never can be changed (i.e. status change comments)
+        if (v_note_lock_mode = 'IMMED') then
+            return 'Locked';
+        end if;
+
+        if (v_note_lock_mode = 'USER_LOCKED') then
+            return 'Locked by User';
+        end if;
+
+        return '<none>';
+    exception
+        when no_data_found then
+            log_error('OSI_NOTE.GET_NOTE_STATUS: ' || sqlerrm);
+            return null;
+    end get_note_status;
+
+    /* Gets the SID of an objects STATUS note type (NOTE_CAT_CODE of 'STATUS') */
+    function get_note_type(p_obj_type in varchar2, p_note_cat_code in varchar2)
+        return varchar2 is
+        v_return   t_osi_note_type.sid%type;
+    begin
+        select sid
+          into v_return
+          from t_osi_note_type
+         where obj_type member of osi_object.get_objtypes(p_obj_type) and code = p_note_cat_code;
+
+        return v_return;
+    exception
+        when others then
+            log_error('OSI_NOTE.GET_STATUS_NOTE_TYPE: ' || sqlerrm);
+            return 'NO_STATUS_NOTE_TYPE_EXISTS';
+    end get_note_type;
+
+    /* Adds a note to an object with a particular note type */
+    function add_note(p_obj in varchar2, p_note_type in varchar2, p_text in varchar2)
+        return varchar2 is
+        v_creating_personnel   varchar2(20);
+        v_lock_mode            t_osi_note_type.lock_mode%type;
+        v_return               t_osi_note.sid%type;
+    begin
+        --Get the creating personnel
+        v_creating_personnel := core_context.personnel_sid;
+
+        --Get the lock mode
+        select lock_mode
+          into v_lock_mode
+          from t_osi_note_type
+         where sid = p_note_type;
+
+        --Insert the note
+        insert into t_osi_note
+                    (obj, note_type, note_text, creating_personnel, lock_mode)
+             values (p_obj, p_note_type, p_text, v_creating_personnel, v_lock_mode)
+             return sid
+               into v_return;
+
+        return v_return;
+    exception
+        when others then
+            log_error('OSI_NOTE.ADD_NOTE: ' || sqlerrm);
+            raise;
+    end add_note;
+    
+    /* Given a Note SID, this procedure updates the given note */
+    procedure update_note(
+        p_note_sid           in   varchar2,
+        p_text_to_append     in   varchar2,
+        p_beginning_or_end   in   varchar2 := 'BEGIN') is
+        v_note_text   clob;
+    begin
+        select note_text
+          into v_note_text
+          from t_osi_note
+         where sid = p_note_sid;
+
+        if (p_beginning_or_end = 'BEGIN') then
+            v_note_text := p_text_to_append || v_note_text;
+        else
+            v_note_text := v_note_text || p_text_to_append;
+        end if;
+
+        update t_osi_note
+           set note_text = v_note_text
+         where sid = p_note_sid;
+    exception
+        when others then
+            log_error('OSI_NOTE.UPDATE_NOTE: ' || sqlerrm);
+            raise;
+    end update_note;
+
+    /* Given an object sid and status desc, this function returns the latest
+       note text for that (lifecycle) note type code. */
+    function latest_note(p_obj in Varchar2, p_type in Varchar2)
+        return Clob is
+    begin
+        for p in (select n.note_text
+                    from t_osi_note n, t_osi_note_type nt
+                   where n.obj = p_obj 
+                     and n.note_type = nt.sid
+                     and (nt.code = p_type or
+                          nt.sid = p_type)
+                  order by n.create_on desc)
+        loop
+            return(p.note_text);
+        end loop;
+
+        return(null);                                                            -- if nothing found
+    end latest_note;
+        
+end osi_note;
+/
+
+
+
+
+
+
+
+set define off
+set verify off
+set serveroutput on size 1000000
+set feedback off
+WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK
+begin wwv_flow.g_import_in_progress := true; end; 
+/
+ 
+ 
+--application/set_environment
+prompt  APPLICATION 100 - Web-I2MS
+--
+-- Application Export:
+--   Application:     100
+--   Name:            Web-I2MS
+--   Date and Time:   13:03 Friday November 9, 2012
+--   Exported By:     TWARD
+--   Flashback:       0
+--   Export Type:     Page Export
+--   Version: 3.2.0.00.27
+ 
+-- Import:
+--   Using application builder
+--   or
+--   Using SQL*Plus as the Oracle user APEX_030200 or as the owner (parsing schema) of the application.
+ 
+ 
+--       AAAA       PPPPP   EEEEEE  XX      XX
+--      AA  AA      PP  PP  EE       XX    XX
+--     AA    AA     PP  PP  EE        XX  XX
+--    AAAAAAAAAA    PPPPP   EEEE       XXXX
+--   AA        AA   PP      EE        XX  XX
+--  AA          AA  PP      EE       XX    XX
+--  AA          AA  PP      EEEEEE  XX      XX
+prompt  Set Credentials...
+ 
+begin
+ 
+  -- Assumes you are running the script connected to SQL*Plus as the Oracle user APEX_030200 or as the owner (parsing schema) of the application.
+  wwv_flow_api.set_security_group_id(p_security_group_id=>apex_util.find_security_group_id(user));
+ 
+end;
+/
+
+begin wwv_flow.g_import_in_progress := true; end;
+/
+begin 
+
+select value into wwv_flow_api.g_nls_numeric_chars from nls_session_parameters where parameter='NLS_NUMERIC_CHARACTERS';
+
+end;
+
+/
+begin execute immediate 'alter session set nls_numeric_characters=''.,''';
+
+end;
+
+/
+begin wwv_flow.g_browser_language := 'en-us'; end;
+/
+prompt  Check Compatibility...
+ 
+begin
+ 
+-- This date identifies the minimum version required to import this file.
+wwv_flow_api.set_version(p_version_yyyy_mm_dd=>'2009.01.12');
+ 
+end;
+/
+
+prompt  Set Application ID...
+ 
+begin
+ 
+   -- SET APPLICATION ID
+   wwv_flow.g_flow_id := 100;
+   wwv_flow_api.g_id_offset := 0;
+null;
+ 
+end;
+/
+
+PROMPT ...Remove page 5050
+ 
+begin
+ 
+wwv_flow_api.remove_page (p_flow_id=>wwv_flow.g_flow_id, p_page_id=>5050);
+ 
+end;
+/
+
+ 
+--application/pages/page_05050
+prompt  ...PAGE 5050: Notes
+--
+ 
+begin
+ 
+declare
+    h varchar2(32767) := null;
+    ph varchar2(32767) := null;
+begin
+h := null;
+ph:=ph||'"JS_SEND_REQUEST"'||chr(10)||
+'"JS_REPORT_AUTO_SCROLL"'||chr(10)||
+'"JS_BUTTONSUBMIT"'||chr(10)||
+'<script type="text/javascript">'||chr(10)||
+'function confirmNoteDeletion(t)'||chr(10)||
+'{'||chr(10)||
+' if(confirm(''Are you sure you want to delete this note?''))'||chr(10)||
+'   javascript:buttonSubmit($(t).attr(''id''),t,$(t).attr(''href''))'||chr(10)||
+'}'||chr(10)||
+'</script>';
+
+wwv_flow_api.create_page(
+  p_id     => 5050,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_tab_set=> '',
+  p_name   => 'Notes',
+  p_step_title=> '&P0_OBJ_TAGLINE.',
+  p_html_page_onload=>'onkeydown="return checkForUpDownArrows(event, ''&P5050_SEL_NOTE.'');"'||chr(10)||
+'',
+  p_step_sub_title => 'Notes',
+  p_step_sub_title_type => 'TEXT_WITH_SUBSTITUTIONS',
+  p_first_item=> 'AUTO_FIRST_ITEM',
+  p_include_apex_css_js_yn=>'Y',
+  p_footer_text => '<script type="text/javascript">'||chr(10)||
+'$(window).load(function(){  '||chr(10)||
+''||chr(10)||
+'  var t = setTimeout("scrollDivBackOne()", 500);'||chr(10)||
+''||chr(10)||
+'});'||chr(10)||
+'</script>',
+  p_autocomplete_on_off => 'ON',
+  p_group_id => 88817229855006448+ wwv_flow_api.g_id_offset,
+  p_help_text => '',
+  p_html_page_header => ' ',
+  p_step_template => '',
+  p_required_patch=> null + wwv_flow_api.g_id_offset,
+  p_last_updated_by => 'TWARD',
+  p_last_upd_yyyymmddhh24miss => '20121109130239',
+  p_page_is_public_y_n=> 'N',
+  p_protection_level=> 'N',
+  p_page_comment  => '26-AUG-2010  J.Faris CHG0003228 - updated note category select list to include note type overrides tied to a "sub-parent" (like ACT.CHECKLIST).'||chr(10)||
+''||chr(10)||
+'06-OCT-2010  J.Faris   WCHG0000397 - Integrated Tim Ward''s page updates (involved re-apply of Export button functionality).'||chr(10)||
+''||chr(10)||
+'01-Apr-2011  Tim Ward  CR#3636 - Reformatted the screen to look more like Legacy, included the Time Created.  Made the report and note text 100% width.'||chr(10)||
+''||chr(10)||
+'18-Aug-2011  Tim Ward  CR#3855 - Added Shift Up/Down Key for Navigation. '||chr(10)||
+'18-Aug-2011  Tim Ward  CR#3926 - While viewing Notes in a file with "Notes for Associated Activities" selected.  '||chr(10)||
+'                                 If you select an Activity Note, a new added note gets attached to that activity'||chr(10)||
+'                                 instead of the file.  Also, an update note gets moved to that activity.'||chr(10)||
+'                                 Added P5050_OBJ1 to help with this issue.'||chr(10)||
+''||chr(10)||
+'                                 Added "JS_REPORT_AUTO_SCROLL" to HTML Header.  '||chr(10)||
+'                                 Added onkeydown="return checkForUpDownArrows (event, ''&P10150_SEL_ASSOC.'');" '||chr(10)||
+'                                 to HTML Body Attribute. '||chr(10)||
+'                                 Added name=''#SID#'' to "Link Attributes" of the SID Column of the Report. '||chr(10)||
+'                                 Added a new Branch to'||chr(10)||
+'                                 "f?p=&APP_ID.:5050:&SESSION.::&DEBUG.:::#&5050_SEL_NOTE.",'||chr(10)||
+'                                 this allows the report to move the the Anchor of the selected currentrow.'||chr(10)||
+''||chr(10)||
+''||chr(10)||
+'27-Oct-2011 - CR#3822 - Set Page 0 on Tab changes.'||chr(10)||
+'                        Added &TAB_PAGE_OBJ. to Tab Page Branch.'||chr(10)||
+''||chr(10)||
+'24-May-2012 - CR#4005 - Allow Direct Link into a Note.'||chr(10)||
+'                         Added "Goto Tab and Select Support Object" process.'||chr(10)||
+'                         Changed "Select Note" process.'||chr(10)||
+''||chr(10)||
+'06-Jul-2012 - CR#3822 - Still notes saving/creating to wrong objects.'||chr(10)||
+'                         Added JS_BUTTONSUBMIT.'||chr(10)||
+'                         New Button Template.'||chr(10)||
+'                         New Attributes added to buttons.'||chr(10)||
+'                         Changed Page Branching.'||chr(10)||
+'                         Got rid of Hidden Region and just made'||chr(10)||
+'                         the items hidden.'||chr(10)||
+'                         '||chr(10)||
+'30-Aug-2012 - CR#4106 - Make buttons hide when pressed to avoid double'||chr(10)||
+'                         clicking of the buttons.'||chr(10)||
+''||chr(10)||
+'09-Nov-2012 - CR#4145 - Allow Locking/Unlocking of Notes by Users.'||chr(10)||
+'');
+ 
+wwv_flow_api.set_html_page_header(p_flow_id=>wwv_flow.g_flow_id,p_flow_step_id=>5050,p_text=>ph);
+end;
+ 
+end;
+/
+
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s:=s||'<div class="readOnlyBanner"><span>READ-ONLY</span></div>';
+
+wwv_flow_api.create_page_plug (
+  p_id=> 5494825937411081 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 5050,
+  p_plug_name=> 'Read-Only Banner',
+  p_region_name=>'',
+  p_plug_template=> 0,
+  p_plug_display_sequence=> 5,
+  p_plug_display_column=> 1,
+  p_plug_display_point=> 'BEFORE_BOX_BODY',
+  p_plug_source=> s,
+  p_plug_source_type=> 'STATIC_TEXT',
+  p_translate_title=> 'Y',
+  p_plug_display_error_message=> '#SQLERRM#',
+  p_plug_query_row_template=> 1,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_required_role => '!'||(5459808427748525+ wwv_flow_api.g_id_offset),
+  p_plug_display_condition_type => '',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s := null;
+wwv_flow_api.create_page_plug (
+  p_id=> 8125322827876248 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 5050,
+  p_plug_name=> 'Access Denied',
+  p_region_name=>'',
+  p_plug_template=> 179216655889554481+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 30,
+  p_plug_display_column=> 1,
+  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_source=> s,
+  p_plug_source_type=> 'STATIC_TEXT',
+  p_translate_title=> 'Y',
+  p_plug_display_error_message=> '#SQLERRM#',
+  p_plug_query_row_template=> 1,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => 'PLSQL_EXPRESSION',
+  p_plug_display_when_condition => ':P0_OBJ_TYPE_CODE = ''PERSONNEL'''||chr(10)||
+'and'||chr(10)||
+':TAB_ENABLED <> ''Y''',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s := null;
+wwv_flow_api.create_page_plug (
+  p_id=> 89960036535303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 5050,
+  p_plug_name=> 'Details of Selected Note  <font color="red"><i>([shift]+[down]/[up] to navigate notes)</i></font>',
+  p_region_name=>'',
+  p_plug_template=> 179216655889554481+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 20,
+  p_plug_display_column=> 1,
+  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_source=> s,
+  p_plug_source_type=> 'STATIC_TEXT',
+  p_translate_title=> 'Y',
+  p_plug_display_error_message=> '#SQLERRM#',
+  p_plug_query_row_template=> 1,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows => 15,
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => 'PLSQL_EXPRESSION',
+  p_plug_display_when_condition => ':P5050_SEL_NOTE IS NOT NULL OR :P5050_MODE = ''ADD''',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s:=s||'select N.SID as "SID",'||chr(10)||
+'       N.CREATE_ON as "Date Created",'||chr(10)||
+'       OSI_PERSONNEL.GET_NAME'||chr(10)||
+'                        (N.CREATING_PERSONNEL)'||chr(10)||
+'                                               as "Created By",'||chr(10)||
+'       core_obj.get_parentinfo(N.OBJ) as "File / Activity",'||chr(10)||
+'       NT.DESCRIPTION as "Category",'||chr(10)||
+'       OSI_NOTE.GET_NOTE_STATUS (N.sid) as "Status",'||chr(10)||
+'       decode(n.sid, :P5050_SEL_NOTE, ''Y'', ''N'') ';
+
+s:=s||'as "Current"'||chr(10)||
+'  from T_OSI_NOTE N, T_OSI_NOTE_TYPE NT '||chr(10)||
+'         &P5050_REPORT_WHERE_CLAUSE.';
+
+wwv_flow_api.create_report_region (
+  p_id=> 89960226795303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 5050,
+  p_name=> 'Notes',
+  p_region_name=>'',
+  p_template=> 92560720055766143+ wwv_flow_api.g_id_offset,
+  p_display_sequence=> 10,
+  p_display_column=> 1,
+  p_display_point=> 'AFTER_SHOW_ITEMS',
+  p_source=> s,
+  p_source_type=> 'SQL_QUERY',
+  p_display_error_message=> '#SQLERRM#',
+  p_display_when_condition=> ':P0_obj_type_code <> ''PERSONNEL'''||chr(10)||
+'or'||chr(10)||
+'(:P0_obj_type_code = ''PERSONNEL'' and :TAB_ENABLED = ''Y'')',
+  p_display_condition_type=> 'PLSQL_EXPRESSION',
+  p_plug_caching=> 'NOT_CACHED',
+  p_customized=> '0',
+  p_translate_title=> 'Y',
+  p_ajax_enabled=> 'Y',
+  p_query_row_template=> 5228919666917120+ wwv_flow_api.g_id_offset,
+  p_query_headings_type=> 'COLON_DELMITED_LIST',
+  p_query_num_rows=> '100000',
+  p_query_options=> 'DERIVED_REPORT_COLUMNS',
+  p_query_show_nulls_as=> ' - ',
+  p_query_break_cols=> '0',
+  p_query_no_data_found=> 'No notes found.',
+  p_query_num_rows_type=> 'NEXT_PREVIOUS_LINKS',
+  p_query_row_count_max=> '100000',
+  p_pagination_display_position=> 'BOTTOM_RIGHT',
+  p_csv_output=> 'Y',
+  p_csv_output_link_text=> 'INVISIBLE',
+  p_sort_null=> 'F',
+  p_query_asc_image=> 'arrow_down_gray_dark.gif',
+  p_query_asc_image_attr=> 'width="13" height="12" alt=""',
+  p_query_desc_image=> 'arrow_up_gray_dark.gif',
+  p_query_desc_image_attr=> 'width="13" height="12" alt=""',
+  p_plug_query_exp_filename=> '&P5050_EXPORT_NAME.',
+  p_plug_query_strip_html=> 'Y',
+  p_comment=>'declare'||chr(10)||
+'    v_sql varchar2(3000);'||chr(10)||
+'begin'||chr(10)||
+'    v_sql :='||chr(10)||
+'       ''select N.SID as "SID",'||chr(10)||
+'       N.CREATE_ON as "Date Created",'||chr(10)||
+'       OSI_PERSONNEL.GET_NAME'||chr(10)||
+'                        (N.CREATING_PERSONNEL)'||chr(10)||
+'                                               "Created By",'||chr(10)||
+'       core_obj.get_tagline(N.OBJ) as "FileActivity",'||chr(10)||
+'       NT.DESCRIPTION as "Category",'||chr(10)||
+'       OSI_NOTE.GET_NOTE_STATUS (N.sid) as "Status",'||chr(10)||
+'       decode(n.sid, :P5050_SEL_NOTE, ''''Y'''', ''''N'''') "Current"'||chr(10)||
+'  from T_OSI_NOTE N, T_OSI_NOTE_TYPE NT '''||chr(10)||
+'        || :p5050_report_where_clause;'||chr(10)||
+''||chr(10)||
+':DEBUG := v_sql;'||chr(10)||
+' return v_sql;'||chr(10)||
+'end;'||chr(10)||
+'----------------------------------------------------------------------'||chr(10)||
+'declare'||chr(10)||
+'    v_sql varchar2(3000);'||chr(10)||
+'    --P5050_REPORT_WHERE_CLAUSE varchar2(3000) := ''1=1'';'||chr(10)||
+'begin'||chr(10)||
+'    v_sql :='||chr(10)||
+'        '''||chr(10)||
+'select ''''<a href="javascript:doSubmit(''''''''EDIT_'''' || n.sid || '''''''''''');" target=''''''''_blank''''''''>&ICON_EDIT.</a>'''' as "EDIT", N.SID as "SID2",'||chr(10)||
+'       N.CREATE_ON as "Date Created",'||chr(10)||
+'       OSI_PERSONNEL.GET_NAME'||chr(10)||
+'                        (N.CREATING_PERSONNEL)'||chr(10)||
+'                                               "Created By",'||chr(10)||
+'       NT.DESCRIPTION as "Category",'||chr(10)||
+'       OSI_NOTE.GET_NOTE_STATUS (N.sid) as "Status",'||chr(10)||
+'       decode(n.sid, :P5050_SEL_NOTE, ''''Y'''', ''''N'''') "Current"'||chr(10)||
+'  from T_OSI_NOTE N, T_OSI_NOTE_TYPE NT where '''||chr(10)||
+'        || :p5050_report_where_clause;'||chr(10)||
+''||chr(10)||
+' return v_sql;'||chr(10)||
+'end;');
+end;
+/
+declare
+  s varchar2(32767) := null;
+begin
+s := null;
+wwv_flow_api.create_report_columns (
+  p_id=> 96014433018367920 + wwv_flow_api.g_id_offset,
+  p_region_id=> 89960226795303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_query_column_id=> 1,
+  p_form_element_id=> null,
+  p_column_alias=> 'SID',
+  p_column_display_sequence=> 1,
+  p_column_heading=> '&nbsp;',
+  p_column_link=>'javascript:doSubmit(''EDIT_#SID#'');',
+  p_column_linktext=>'&ICON_EDIT.',
+  p_column_link_attr=>'name=''#SID#''',
+  p_column_alignment=>'LEFT',
+  p_heading_alignment=>'CENTER',
+  p_default_sort_column_sequence=>0,
+  p_disable_sort_column=>'Y',
+  p_sum_column=> 'N',
+  p_hidden_column=> 'N',
+  p_display_when_cond_type=> 'PLSQL_EXPRESSION',
+  p_display_when_condition=> '(osi_auth.check_for_priv(''ADD_VIEW_NOTES'', :P0_OBJ_TYPE_SID) =''Y'' and :P0_OBJ_TYPE_CODE = ''PERSONNEL'') '||chr(10)||
+'or'||chr(10)||
+'(:P0_OBJ_TYPE_CODE <> ''PERSONNEL'')',
+  p_display_as=>'WITHOUT_MODIFICATION',
+  p_lov_show_nulls=> 'NO',
+  p_pk_col_source=> s,
+  p_lov_display_extra=> 'YES',
+  p_include_in_export=> 'N',
+  p_column_comment=>'');
+end;
+/
+declare
+  s varchar2(32767) := null;
+begin
+s := null;
+wwv_flow_api.create_report_columns (
+  p_id=> 96014512011367920 + wwv_flow_api.g_id_offset,
+  p_region_id=> 89960226795303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_query_column_id=> 2,
+  p_form_element_id=> null,
+  p_column_alias=> 'Date Created',
+  p_column_display_sequence=> 2,
+  p_column_heading=> 'Date Created',
+  p_column_format=> '&FMT_DATE.',
+  p_column_alignment=>'LEFT',
+  p_heading_alignment=>'CENTER',
+  p_default_sort_column_sequence=>1,
+  p_default_sort_dir=>'desc',
+  p_disable_sort_column=>'N',
+  p_sum_column=> 'N',
+  p_hidden_column=> 'N',
+  p_display_as=>'WITHOUT_MODIFICATION',
+  p_lov_show_nulls=> 'NO',
+  p_pk_col_source=> s,
+  p_lov_display_extra=> 'YES',
+  p_include_in_export=> 'Y',
+  p_column_comment=>'');
+end;
+/
+declare
+  s varchar2(32767) := null;
+begin
+s := null;
+wwv_flow_api.create_report_columns (
+  p_id=> 96014621061367920 + wwv_flow_api.g_id_offset,
+  p_region_id=> 89960226795303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_query_column_id=> 3,
+  p_form_element_id=> null,
+  p_column_alias=> 'Created By',
+  p_column_display_sequence=> 4,
+  p_column_heading=> 'Created By',
+  p_column_alignment=>'LEFT',
+  p_heading_alignment=>'CENTER',
+  p_default_sort_column_sequence=>0,
+  p_disable_sort_column=>'N',
+  p_sum_column=> 'N',
+  p_hidden_column=> 'N',
+  p_display_as=>'WITHOUT_MODIFICATION',
+  p_pk_col_source=> s,
+  p_column_comment=>'');
+end;
+/
+declare
+  s varchar2(32767) := null;
+begin
+s := null;
+wwv_flow_api.create_report_columns (
+  p_id=> 96015837651378745 + wwv_flow_api.g_id_offset,
+  p_region_id=> 89960226795303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_query_column_id=> 4,
+  p_form_element_id=> null,
+  p_column_alias=> 'File / Activity',
+  p_column_display_sequence=> 3,
+  p_column_heading=> 'File / Activity',
+  p_column_alignment=>'LEFT',
+  p_heading_alignment=>'CENTER',
+  p_default_sort_column_sequence=>0,
+  p_disable_sort_column=>'N',
+  p_sum_column=> 'N',
+  p_hidden_column=> 'N',
+  p_display_as=>'WITHOUT_MODIFICATION',
+  p_pk_col_source=> s,
+  p_column_comment=>'');
+end;
+/
+declare
+  s varchar2(32767) := null;
+begin
+s := null;
+wwv_flow_api.create_report_columns (
+  p_id=> 96014836319367920 + wwv_flow_api.g_id_offset,
+  p_region_id=> 89960226795303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_query_column_id=> 5,
+  p_form_element_id=> null,
+  p_column_alias=> 'Category',
+  p_column_display_sequence=> 5,
+  p_column_heading=> 'Category',
+  p_column_alignment=>'LEFT',
+  p_heading_alignment=>'CENTER',
+  p_default_sort_column_sequence=>0,
+  p_disable_sort_column=>'N',
+  p_sum_column=> 'N',
+  p_hidden_column=> 'N',
+  p_display_as=>'WITHOUT_MODIFICATION',
+  p_pk_col_source=> s,
+  p_column_comment=>'');
+end;
+/
+declare
+  s varchar2(32767) := null;
+begin
+s := null;
+wwv_flow_api.create_report_columns (
+  p_id=> 96014937189367920 + wwv_flow_api.g_id_offset,
+  p_region_id=> 89960226795303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_query_column_id=> 6,
+  p_form_element_id=> null,
+  p_column_alias=> 'Status',
+  p_column_display_sequence=> 6,
+  p_column_heading=> 'Status',
+  p_column_alignment=>'LEFT',
+  p_heading_alignment=>'CENTER',
+  p_default_sort_column_sequence=>0,
+  p_disable_sort_column=>'N',
+  p_sum_column=> 'N',
+  p_hidden_column=> 'N',
+  p_display_as=>'WITHOUT_MODIFICATION',
+  p_pk_col_source=> s,
+  p_column_comment=>'');
+end;
+/
+declare
+  s varchar2(32767) := null;
+begin
+s := null;
+wwv_flow_api.create_report_columns (
+  p_id=> 96015018648367920 + wwv_flow_api.g_id_offset,
+  p_region_id=> 89960226795303507 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_query_column_id=> 7,
+  p_form_element_id=> null,
+  p_column_alias=> 'Current',
+  p_column_display_sequence=> 7,
+  p_column_heading=> 'Current',
+  p_column_alignment=>'LEFT',
+  p_heading_alignment=>'CENTER',
+  p_default_sort_column_sequence=>0,
+  p_disable_sort_column=>'Y',
+  p_sum_column=> 'N',
+  p_hidden_column=> 'Y',
+  p_display_as=>'WITHOUT_MODIFICATION',
+  p_pk_col_source=> s,
+  p_column_comment=>'');
+end;
+/
+declare
+  s varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+s := null;
+wwv_flow_api.create_page_plug (
+  p_id=> 93113530125208810 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_page_id=> 5050,
+  p_plug_name=> 'Choose the Notes to Display',
+  p_region_name=>'',
+  p_plug_template=> 179216655889554481+ wwv_flow_api.g_id_offset,
+  p_plug_display_sequence=> 15,
+  p_plug_display_column=> 1,
+  p_plug_display_point=> 'AFTER_SHOW_ITEMS',
+  p_plug_source=> s,
+  p_plug_source_type=> 'STATIC_TEXT',
+  p_translate_title=> 'Y',
+  p_plug_display_error_message=> '#SQLERRM#',
+  p_plug_query_row_template=> 179219067086554487+ wwv_flow_api.g_id_offset,
+  p_plug_query_headings_type=> 'QUERY_COLUMNS',
+  p_plug_query_num_rows => 15,
+  p_plug_query_num_rows_type => 'NEXT_PREVIOUS_LINKS',
+  p_plug_query_row_count_max => 500,
+  p_plug_query_show_nulls_as => ' - ',
+  p_plug_display_condition_type => 'PLSQL_EXPRESSION',
+  p_plug_display_when_condition => ':P5050_IS_FILE = ''Y''',
+  p_pagination_display_position=>'BOTTOM_RIGHT',
+  p_plug_customized=>'0',
+  p_plug_caching=> 'NOT_CACHED',
+  p_plug_comment=> '');
+end;
+/
+ 
+begin
+ 
+wwv_flow_api.create_page_button(
+  p_id             => 89960911365303509 + wwv_flow_api.g_id_offset,
+  p_flow_id        => wwv_flow.g_flow_id,
+  p_flow_step_id   => 5050,
+  p_button_sequence=> 40,
+  p_button_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_button_name    => 'ADD',
+  p_button_image   => 'template:'||to_char(13904225673632513+wwv_flow_api.g_id_offset),
+  p_button_image_alt=> '&BTN_ADD. Note',
+  p_button_position=> 'REGION_TEMPLATE_CHANGE',
+  p_button_alignment=> 'RIGHT',
+  p_button_redirect_url=> '',
+  p_button_condition=> '(osi_auth.check_for_priv(''ADD_VIEW_NOTES'', :P0_OBJ_TYPE_SID) = ''Y'' and :P0_OBJ_TYPE_CODE = ''PERSONNEL'') '||chr(10)||
+'or'||chr(10)||
+'(osi_auth.check_for_priv(''NOTES_ADD'', :P0_OBJ_TYPE_SID) = ''Y'' and :P0_OBJ_TYPE_CODE = ''UNIT'') '||chr(10)||
+'or'||chr(10)||
+'(:P0_OBJ_TYPE_CODE not in (''PERSONNEL'',''UNIT''))',
+  p_button_condition_type=> 'PLSQL_EXPRESSION',
+  p_button_cattributes=>'id="ADD_&P0_OBJ."  items="P0_OBJ,P5050_OBJ,P5050_OBJ1" values="&P0_OBJ.,&P0_OBJ.,&P0_OBJ."',
+  p_security_scheme => 5459808427748525+ wwv_flow_api.g_id_offset,
+  p_required_patch => null + wwv_flow_api.g_id_offset);
+ 
+wwv_flow_api.create_page_button(
+  p_id             => 89961519126303510 + wwv_flow_api.g_id_offset,
+  p_flow_id        => wwv_flow.g_flow_id,
+  p_flow_step_id   => 5050,
+  p_button_sequence=> 10,
+  p_button_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_button_name    => 'DELETE',
+  p_button_image   => 'template:'||to_char(13904225673632513+wwv_flow_api.g_id_offset),
+  p_button_image_alt=> '&BTN_DELETE.',
+  p_button_position=> 'REGION_TEMPLATE_CREATE',
+  p_button_alignment=> 'RIGHT',
+  p_button_redirect_url=> '#',
+  p_button_condition=> ':P5050_SEL_NOTE is not null '||chr(10)||
+'and '||chr(10)||
+':P5050_NOTE_STATUS is null',
+  p_button_condition_type=> 'PLSQL_EXPRESSION',
+  p_button_cattributes=>'id="DELETE_&P0_OBJ." items="P0_OBJ,P5050_OBJ,P5050_OBJ1,P5050_SEL_NOTE" values="&P0_OBJ.,&P0_OBJ.,&P0_OBJ.,&P5050_SEL_NOTE."  onClick="javascript:confirmNoteDeletion(this);"',
+  p_security_scheme => 5459808427748525+ wwv_flow_api.g_id_offset,
+  p_required_patch => null + wwv_flow_api.g_id_offset);
+ 
+wwv_flow_api.create_page_button(
+  p_id             => 89961125812303510 + wwv_flow_api.g_id_offset,
+  p_flow_id        => wwv_flow.g_flow_id,
+  p_flow_step_id   => 5050,
+  p_button_sequence=> 20,
+  p_button_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_button_name    => 'SAVE',
+  p_button_image   => 'template:'||to_char(13904225673632513+wwv_flow_api.g_id_offset),
+  p_button_image_alt=> '&BTN_SAVE.',
+  p_button_position=> 'REGION_TEMPLATE_CREATE',
+  p_button_alignment=> 'RIGHT',
+  p_button_redirect_url=> '',
+  p_button_condition=> ':P5050_SEL_NOTE is not null'||chr(10)||
+'and'||chr(10)||
+':P5050_NOTE_STATUS is null',
+  p_button_condition_type=> 'PLSQL_EXPRESSION',
+  p_button_cattributes=>'id="SAVE_&P0_OBJ." items="P0_OBJ,P5050_OBJ,P5050_OBJ1,P5050_SEL_NOTE" values="&P0_OBJ.,&P0_OBJ.,&P0_OBJ.,&P5050_SEL_NOTE."',
+  p_security_scheme => 5459808427748525+ wwv_flow_api.g_id_offset,
+  p_required_patch => null + wwv_flow_api.g_id_offset);
+ 
+wwv_flow_api.create_page_button(
+  p_id             => 90054934693849831 + wwv_flow_api.g_id_offset,
+  p_flow_id        => wwv_flow.g_flow_id,
+  p_flow_step_id   => 5050,
+  p_button_sequence=> 50,
+  p_button_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_button_name    => 'CREATE',
+  p_button_image   => 'template:'||to_char(13904225673632513+wwv_flow_api.g_id_offset),
+  p_button_image_alt=> '&BTN_CREATE.',
+  p_button_position=> 'REGION_TEMPLATE_CREATE',
+  p_button_alignment=> 'RIGHT',
+  p_button_redirect_url=> '',
+  p_button_condition=> 'P5050_SEL_NOTE',
+  p_button_condition_type=> 'ITEM_IS_NULL',
+  p_button_cattributes=>'id="CREATE_&P0_OBJ." items="P0_OBJ,P5050_OBJ,P5050_OBJ1" values="&P0_OBJ.,&P0_OBJ.,&P0_OBJ."',
+  p_security_scheme => 5459808427748525+ wwv_flow_api.g_id_offset,
+  p_database_action=>'INSERT',
+  p_required_patch => null + wwv_flow_api.g_id_offset);
+ 
+wwv_flow_api.create_page_button(
+  p_id             => 16568917834752857 + wwv_flow_api.g_id_offset,
+  p_flow_id        => wwv_flow.g_flow_id,
+  p_flow_step_id   => 5050,
+  p_button_sequence=> 70,
+  p_button_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_button_name    => 'EXPORT',
+  p_button_image   => 'template:'||to_char(15353513871475325+wwv_flow_api.g_id_offset),
+  p_button_image_alt=> '&BTN_EXPORT.',
+  p_button_position=> 'REGION_TEMPLATE_HELP',
+  p_button_alignment=> 'RIGHT',
+  p_button_redirect_url=> 'javascript:void(0);',
+  p_button_cattributes=>'onClick="javascript:getCSV(null, this, 5050);"',
+  p_required_patch => null + wwv_flow_api.g_id_offset);
+ 
+wwv_flow_api.create_page_button(
+  p_id             => 90853938173386146 + wwv_flow_api.g_id_offset,
+  p_flow_id        => wwv_flow.g_flow_id,
+  p_flow_step_id   => 5050,
+  p_button_sequence=> 60,
+  p_button_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_button_name    => 'CANCEL',
+  p_button_image   => 'template:'||to_char(179221063608554498+wwv_flow_api.g_id_offset),
+  p_button_image_alt=> '&BTN_CANCEL.',
+  p_button_position=> 'REGION_TEMPLATE_PREVIOUS',
+  p_button_alignment=> 'RIGHT',
+  p_button_redirect_url=> '',
+  p_required_patch => null + wwv_flow_api.g_id_offset);
+ 
+wwv_flow_api.create_page_button(
+  p_id             => 17493212389922411 + wwv_flow_api.g_id_offset,
+  p_flow_id        => wwv_flow.g_flow_id,
+  p_flow_step_id   => 5050,
+  p_button_sequence=> 80,
+  p_button_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_button_name    => 'LOCK',
+  p_button_image   => 'template:'||to_char(13904225673632513+wwv_flow_api.g_id_offset),
+  p_button_image_alt=> 'Lock',
+  p_button_position=> 'REGION_TEMPLATE_PREVIOUS',
+  p_button_alignment=> 'RIGHT',
+  p_button_redirect_url=> '',
+  p_button_condition=> ':P5050_SEL_NOTE IS NOT NULL '||chr(10)||
+'AND osi_personnel.get_name(''&USER_SID.'')=osi_personnel.get_name(:P5050_CREATED_BY)'||chr(10)||
+'AND :P5050_NOTE_STATUS is null',
+  p_button_condition_type=> 'PLSQL_EXPRESSION',
+  p_button_cattributes=>'id="LOCK_&P0_OBJ." items="P0_OBJ,P5050_OBJ,P5050_OBJ1" values="&P0_OBJ.,&P0_OBJ.,&P0_OBJ."',
+  p_security_scheme => 5459808427748525+ wwv_flow_api.g_id_offset,
+  p_required_patch => null + wwv_flow_api.g_id_offset);
+ 
+wwv_flow_api.create_page_button(
+  p_id             => 17539116816018320 + wwv_flow_api.g_id_offset,
+  p_flow_id        => wwv_flow.g_flow_id,
+  p_flow_step_id   => 5050,
+  p_button_sequence=> 90,
+  p_button_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_button_name    => 'UNLOCK',
+  p_button_image   => 'template:'||to_char(13904225673632513+wwv_flow_api.g_id_offset),
+  p_button_image_alt=> 'Unlock',
+  p_button_position=> 'REGION_TEMPLATE_PREVIOUS',
+  p_button_alignment=> 'RIGHT',
+  p_button_redirect_url=> '',
+  p_button_condition=> ':P5050_SEL_NOTE IS NOT NULL '||chr(10)||
+'AND osi_personnel.get_name(''&USER_SID.'')=osi_personnel.get_name(:P5050_CREATED_BY)'||chr(10)||
+'AND :P5050_NOTE_STATUS is not null'||chr(10)||
+'AND :P5050_LOCK_MODE=''USER_LOCKED''',
+  p_button_condition_type=> 'PLSQL_EXPRESSION',
+  p_button_cattributes=>'id="UNLOCK_&P0_OBJ." items="P0_OBJ,P5050_OBJ,P5050_OBJ1" values="&P0_OBJ.,&P0_OBJ.,&P0_OBJ."',
+  p_security_scheme => 5459808427748525+ wwv_flow_api.g_id_offset,
+  p_required_patch => null + wwv_flow_api.g_id_offset);
+ 
+ 
+end;
+/
+
+ 
+begin
+ 
+wwv_flow_api.create_page_branch(
+  p_id=>89964807483303526 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_branch_action=> 'f?p=&APP_ID.:&TAB_PAGE.:&SESSION.:TAB:&DEBUG.:&TAB_PAGE.:P0_OBJ:&TAB_PAGE_OBJ.',
+  p_branch_point=> 'AFTER_PROCESSING',
+  p_branch_type=> 'REDIRECT_URL',
+  p_branch_sequence=> 10,
+  p_branch_condition_type=> 'PLSQL_EXPRESSION',
+  p_branch_condition=> ':REQUEST like ''TAB%''',
+  p_save_state_before_branch_yn=>'N',
+  p_branch_comment=> 'Created 16-APR-2009 22:15 by TIM');
+ 
+wwv_flow_api.create_page_branch(
+  p_id=>7409418616402481 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_branch_action=> 'f?p=&APP_ID.:5050:&SESSION.::&DEBUG.::P0_OBJ:&P5050_OBJ.#&P5050_SEL_NOTE.',
+  p_branch_point=> 'AFTER_PROCESSING',
+  p_branch_type=> 'REDIRECT_URL',
+  p_branch_sequence=> 15,
+  p_branch_condition_type=> 'PLSQL_EXPRESSION',
+  p_branch_condition=> ':REQUEST LIKE ''SAVE_%'' OR :REQUEST LIKE ''EDIT_%''',
+  p_save_state_before_branch_yn=>'N',
+  p_branch_comment=> '');
+ 
+wwv_flow_api.create_page_branch(
+  p_id=>89964623944303526 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_branch_action=> 'f?p=&APP_ID.:5050:&SESSION.:&REQUEST.:&DEBUG.::P0_OBJ:&P5050_OBJ1.&success_msg=#SUCCESS_MSG#',
+  p_branch_point=> 'AFTER_PROCESSING',
+  p_branch_type=> 'REDIRECT_URL',
+  p_branch_sequence=> 20,
+  p_save_state_before_branch_yn=>'N',
+  p_branch_comment=> '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>5210111000138771 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_TIME_CREATED',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 319,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'NO',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Time Created:',
+  p_format_mask=>'hh:mi:ss am',
+  p_source=>'SUBSTR(:P5050_CREATE_ON,LENGTH(''&FMT_DATE.'')+2)',
+  p_source_type=> 'FUNCTION',
+  p_display_as=> 'DISPLAY_ONLY_HTML',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap width=20%',
+  p_cattributes_element=>'nowrap',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_display_when=>'P5050_SEL_NOTE',
+  p_display_when_type=>'ITEM_IS_NOT_NULL',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>5215005993250872 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_SPACER1',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 313,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> '',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> null,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'RIGHT',
+  p_field_alignment  => 'LEFT-CENTER',
+  p_is_persistent=> 'Y',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>5215307556250872 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_SPACER2',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 315,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> '',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> null,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'RIGHT',
+  p_field_alignment  => 'LEFT-CENTER',
+  p_is_persistent=> 'Y',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>5217021230255221 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_SPACER3',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 318,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> '',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> null,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'RIGHT',
+  p_field_alignment  => 'LEFT-CENTER',
+  p_is_persistent=> 'Y',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>5226923073814093 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_CREATE_ON',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 298,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'NO',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_format_mask=>'&FMT_DATE. HH:MI:SS AM',
+  p_source=>'CREATE_ON',
+  p_source_type=> 'DB_COLUMN',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 1,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>6955831345306470 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_NOTE_CAT_STATUS',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 15,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220564785554493+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>8125628924876250 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_ACCESS_DENIED',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 10,
+  p_item_plug_id => 8125322827876248+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Access Denied',
+  p_source=>'You do not have permission to view the contents of this tab.',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'DISPLAY_ONLY_HTML',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220853378554498+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>14048229583816368 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_OBJ1',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 331,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 1,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>16569129608756237 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_EXPORT_NAME',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 240,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> null,
+  p_cMaxlength=> 2000,
+  p_cHeight=> null,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_is_persistent=> 'Y',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>17539315908027569 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_LOCK_MODE',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 341,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'NO',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_source=>'LOCK_MODE',
+  p_source_type=> 'DB_COLUMN',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> null,
+  p_cMaxlength=> 2000,
+  p_cHeight=> null,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_is_persistent=> 'Y',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>89961926091303512 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_OBJ',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 310,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'PLSQL_EXPRESSION',
+  p_source=>'OBJ',
+  p_source_type=> 'DB_COLUMN',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 1,
+  p_cAttributes=> 'nowrap',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => ':P0_OBJ was in Default Value---Removed.'||chr(10)||
+'');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>89962110711303514 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_SEL_NOTE',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 50,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Selected Note SID',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 1,
+  p_cAttributes=> 'nowrap',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>89962331517303514 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_NOTE_CATEGORY',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 316,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Category:',
+  p_source=>'NOTE_TYPE',
+  p_source_type=> 'DB_COLUMN',
+  p_display_as=> 'COMBOBOX',
+  p_lov => 'select   DESCRIPTION, sid'||chr(10)||
+'    from T_OSI_NOTE_TYPE nt'||chr(10)||
+'   where (OBJ_TYPE member of osi_object.get_objtypes(:P0_OBJ_TYPE_SID)'||chr(10)||
+'     and (ACTIVE = ''Y'')'||chr(10)||
+'     and USAGE = ''NOTELIST'''||chr(10)||
+'     and code not in (select code'||chr(10)||
+'                      from t_osi_note_type'||chr(10)||
+'                     where ((obj_type = :P0_OBJ_TYPE_SID and override = ''Y'')'||chr(10)||
+'                                or'||chr(10)||
+'                               (obj_type member of osi_object.get_objtypes(:P0_OBJ_TYPE_SID)'||chr(10)||
+'                           and override = ''Y''))'||chr(10)||
+'                       and sid <> nt.sid)) or SID = :P5050_NOTE_CATEGORY'||chr(10)||
+'   order by SEQ, DESCRIPTION',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'YES',
+  p_lov_translated=> 'N',
+  p_lov_null_text=>'- Select Category -',
+  p_lov_null_value=> '',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap width=30%',
+  p_cattributes_element=>'nowrap',
+  p_tag_attributes  => '&P5050_NOTE_CAT_STATUS.',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_read_only_when=>'P5050_NOTE_STATUS',
+  p_read_only_when2=>'readOnly',
+  p_read_only_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2',
+  p_field_template => 179220853378554498+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>89962532754303515 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_NOTE',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 321,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Note Text',
+  p_source=>'NOTE_TEXT',
+  p_source_type=> 'DB_COLUMN',
+  p_display_as=> 'TEXTAREA_CHAR_COUNT',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 85,
+  p_cMaxlength=> 30000,
+  p_cHeight=> 10,
+  p_cAttributes=> 'nowrap',
+  p_cattributes_element=>'style="width:99%"',
+  p_tag_attributes  => '&P5050_NOTE_STATUS. style="width:99%"',
+  p_tag_attributes2=> 'style="width:99%"',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 10,
+  p_rowspan => 1,
+  p_label_alignment  => 'ABOVE',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220853378554498+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>89962722248303515 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_NOTE_STATUS',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 10,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Note Status',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>90844319931888887 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_DATE_CREATED',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 317,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'NO',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Date Created:',
+  p_source=>'SUBSTR(:P5050_CREATE_ON,1,LENGTH(''&FMT_DATE.''))',
+  p_source_type=> 'FUNCTION',
+  p_display_as=> 'DISPLAY_ONLY_ESCAPE_SC',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap width=30%',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_display_when=>'P5050_SEL_NOTE',
+  p_display_when_type=>'ITEM_IS_NOT_NULL',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>90844616253897246 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_CREATED_BY',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 311,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'NO',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Created By',
+  p_source=>'CREATING_PERSONNEL',
+  p_source_type=> 'DB_COLUMN',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>90844820193907887 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_STATUS',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 314,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Status:',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'DISPLAY_ONLY_ESCAPE_SC',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap width=10%',
+  p_cattributes_element=>'nowrap',
+  p_begin_on_new_line => 'NO',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_display_when=>'P5050_SEL_NOTE',
+  p_display_when_type=>'ITEM_IS_NOT_NULL',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>90850133175223826 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_CREATED_BY_DISPLAY',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 312,
+  p_item_plug_id => 89960036535303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'NO',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Author:',
+  p_source=>'osi_personnel.get_name(:P5050_CREATED_BY)',
+  p_source_type=> 'FUNCTION',
+  p_display_as=> 'DISPLAY_ONLY_ESCAPE_SC',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap width=30%',
+  p_cattributes_element=>'nowrap',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_display_when=>'P5050_SEL_NOTE',
+  p_display_when_type=>'ITEM_IS_NOT_NULL',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>93113826066208826 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_ASSOC_NOTES',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 200,
+  p_item_plug_id => 93113530125208810+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'CHECKBOX',
+  p_lov => 'STATIC2:Notes for this File;ME,Notes for Associated Files;A_FILES,Notes for Associated Activities;A_ACT,Notes for Inherited Activities;I_ACT',
+  p_lov_columns=> 4,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_tag_attributes  => 'onClick="javascript:doSubmit(''UPDATE'');"',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'RIGHT',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>93116526625255034 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_IS_FILE',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 210,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'Is File?',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220564785554493+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>93549136455706640 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_MODE',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 220,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'P5050_MODE',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 30,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'LEFT',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+declare
+    h varchar2(32767) := null;
+begin
+wwv_flow_api.create_page_item(
+  p_id=>95808223246646612 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id=> 5050,
+  p_name=>'P5050_REPORT_WHERE_CLAUSE',
+  p_data_type=> 'VARCHAR',
+  p_accept_processing=> 'REPLACE_EXISTING',
+  p_item_sequence=> 230,
+  p_item_plug_id => 89960226795303507+wwv_flow_api.g_id_offset,
+  p_use_cache_before_default=> 'YES',
+  p_item_default_type => 'STATIC_TEXT_WITH_SUBSTITUTIONS',
+  p_prompt=>'WHERE Clause',
+  p_source_type=> 'STATIC',
+  p_display_as=> 'HIDDEN',
+  p_lov_columns=> 1,
+  p_lov_display_null=> 'NO',
+  p_lov_translated=> 'N',
+  p_cSize=> 150,
+  p_cMaxlength=> 2000,
+  p_cHeight=> 5,
+  p_cAttributes=> 'nowrap="nowrap"',
+  p_begin_on_new_line => 'YES',
+  p_begin_on_new_field=> 'YES',
+  p_colspan => 1,
+  p_rowspan => 1,
+  p_label_alignment  => 'RIGHT',
+  p_field_alignment  => 'LEFT',
+  p_field_template => 179220647225554497+wwv_flow_api.g_id_offset,
+  p_is_persistent=> 'Y',
+  p_lov_display_extra=>'NO',
+  p_protection_level => 'N',
+  p_item_comment => '');
+ 
+ 
+end;
+/
+
+ 
+begin
+ 
+wwv_flow_api.create_page_validation(
+  p_id => 89963033121303515 + wwv_flow_api.g_id_offset,
+  p_flow_id => wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_validation_name => 'P5050_NOTE_CATEGORY Not Null',
+  p_validation_sequence=> 13,
+  p_validation => 'P5050_NOTE_CATEGORY',
+  p_validation_type => 'ITEM_NOT_NULL',
+  p_error_message => 'Category must be specified.',
+  p_validation_condition=> ':REQUEST LIKE ''CREATE_%'' or'||chr(10)||
+':REQUEST LIKE ''SAVE_%''',
+  p_validation_condition_type=> 'PLSQL_EXPRESSION',
+  p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION',
+  p_validation_comment=> '');
+ 
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+wwv_flow_api.create_page_validation(
+  p_id => 89963206564303517 + wwv_flow_api.g_id_offset,
+  p_flow_id => wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_validation_name => 'P5050_NOTE Not Null',
+  p_validation_sequence=> 23,
+  p_validation => 'P5050_NOTE',
+  p_validation_type => 'ITEM_NOT_NULL',
+  p_error_message => 'Note text must be specified.',
+  p_validation_condition=> ':REQUEST LIKE ''CREATE_%'' or'||chr(10)||
+':REQUEST LIKE ''SAVE_%''',
+  p_validation_condition_type=> 'PLSQL_EXPRESSION',
+  p_associated_item=> 89962532754303515 + wwv_flow_api.g_id_offset,
+  p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION',
+  p_validation_comment=> '');
+ 
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+wwv_flow_api.create_page_validation(
+  p_id => 89963419602303517 + wwv_flow_api.g_id_offset,
+  p_flow_id => wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_validation_name => 'MAX_NUM Validation',
+  p_validation_sequence=> 33,
+  p_validation => 'declare'||chr(10)||
+''||chr(10)||
+'    V_MAX_NUM      number;'||chr(10)||
+'    V_NOTE_COUNT   number;'||chr(10)||
+''||chr(10)||
+'begin'||chr(10)||
+'    select MAX_NUM into V_MAX_NUM'||chr(10)||
+'          from T_OSI_NOTE_TYPE'||chr(10)||
+'              where sid=:P5050_NOTE_CATEGORY;'||chr(10)||
+''||chr(10)||
+'--wwv_flow.debug(''V_MAX_NUM='' || V_MAX_NUM);      '||chr(10)||
+''||chr(10)||
+'    if (V_MAX_NUM > 0) then'||chr(10)||
+''||chr(10)||
+'      if :P5050_SEL_NOTE IS NULL then'||chr(10)||
+''||chr(10)||
+'        select count(*) into V_NOTE_COUNT'||chr(10)||
+'              from T_OSI_NOTE'||chr(10)||
+'                  where OBJ=:P0_OBJ'||chr(10)||
+'                    and NOTE_TYPE=:P5050_NOTE_CATEGORY;'||chr(10)||
+'    '||chr(10)||
+'      else'||chr(10)||
+''||chr(10)||
+'        select count(*) into V_NOTE_COUNT'||chr(10)||
+'              from T_OSI_NOTE'||chr(10)||
+'                  where OBJ=:P0_OBJ'||chr(10)||
+'                    and NOTE_TYPE=:P5050_NOTE_CATEGORY'||chr(10)||
+'                    and sid!=:P5050_SEL_NOTE;'||chr(10)||
+''||chr(10)||
+''||chr(10)||
+'      end if;'||chr(10)||
+''||chr(10)||
+'      if (V_NOTE_COUNT >= V_MAX_NUM) then'||chr(10)||
+''||chr(10)||
+'        return false;'||chr(10)||
+''||chr(10)||
+'      end if;'||chr(10)||
+''||chr(10)||
+'    end if;'||chr(10)||
+''||chr(10)||
+'    return true;'||chr(10)||
+'exception'||chr(10)||
+'    when no_data_found then'||chr(10)||
+'        return true;'||chr(10)||
+''||chr(10)||
+'end;',
+  p_validation_type => 'FUNC_BODY_RETURNING_BOOLEAN',
+  p_error_message => 'The maximum number of notes for the selected category has been reached.  Please change the category to something different.',
+  p_validation_condition=> ':REQUEST LIKE ''CREATE_%'' or'||chr(10)||
+':REQUEST LIKE ''SAVE_%''',
+  p_validation_condition_type=> 'PLSQL_EXPRESSION',
+  p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION',
+  p_validation_comment=> '');
+ 
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+wwv_flow_api.create_page_validation(
+  p_id => 4918708220481146 + wwv_flow_api.g_id_offset,
+  p_flow_id => wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_validation_name => 'Authorization verification',
+  p_validation_sequence=> 35,
+  p_validation => 'begin'||chr(10)||
+'    for x in (select at.code'||chr(10)||
+'                from t_osi_auth_action_type at, t_osi_note_type nt'||chr(10)||
+'               where nt.sid = :p5050_note_category'||chr(10)||
+'                 and nt.auth_action = at.sid'||chr(10)||
+'                 and nt.obj_type = :p0_obj_type_sid)'||chr(10)||
+'    loop'||chr(10)||
+'        if (osi_auth.check_for_priv(x.code, :p0_obj_type_sid) = ''Y'') then'||chr(10)||
+'            return true;'||chr(10)||
+'        else'||chr(10)||
+'            return false;'||chr(10)||
+'        end if;'||chr(10)||
+'    end loop;'||chr(10)||
+''||chr(10)||
+'    return true;'||chr(10)||
+'end;',
+  p_validation_type => 'FUNC_BODY_RETURNING_BOOLEAN',
+  p_error_message => 'You are not authorized to add or modify this note type.',
+  p_validation_condition=> ':REQUEST LIKE ''CREATE_%'' or'||chr(10)||
+':REQUEST LIKE ''SAVE_%''',
+  p_validation_condition_type=> 'PLSQL_EXPRESSION',
+  p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION',
+  p_validation_comment=> '');
+ 
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'begin'||chr(10)||
+'     if (:request like (''ADD_%'')) then'||chr(10)||
+'     '||chr(10)||
+'       :p5050_mode  := ''ADD'';'||chr(10)||
+'       :P5050_obj   := replace(:request, ''ADD_'', '''');'||chr(10)||
+'       :P5050_obj1  := replace(:request, ''ADD_'', '''');'||chr(10)||
+'       :P0_obj      := replace(:request, ''ADD_'', '''');'||chr(10)||
+''||chr(10)||
+'     else'||chr(10)||
+'        '||chr(10)||
+'       :p5050_mode := null;'||chr(10)||
+''||chr(10)||
+'     end if;'||chr(10)||
+'end;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 95490906988348787 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 5,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Set mode',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>'UPDATE',
+  p_process_when_type=>'REQUEST_NOT_IN_CONDITION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'#OWNER#:T_OSI_NOTE:P5050_SEL_NOTE:SID|IUD';
+
+wwv_flow_api.create_page_process(
+  p_id     => 89963914024303524 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 10,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'DML_PROCESS_ROW',
+  p_process_name=> 'ARP',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '&FAILURE_MSG.',
+  p_process_when=>':request in (''SAVE'',''DELETE'')'||chr(10)||
+'or :request like ''CREATE%''',
+  p_process_when_type=>'NEVER',
+  p_process_success_message=> '&SUCCESS_MSG.',
+  p_process_is_stateful_y_n=>'N',
+  p_return_key_into_item1=>'P5050_SEL_NOTE',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'INSERT INTO T_OSI_NOTE (OBJ,NOTE_TYPE,NOTE_TEXT) VALUES (:P5050_OBJ1,:P5050_NOTE_CATEGORY,:P5050_NOTE) RETURNING SID INTO :P5050_SEL_NOTE;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 14371219923184278 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 10.1,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Create Note',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>':request like ''CREATE_%''',
+  p_process_when_type=>'PLSQL_EXPRESSION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'UPDATE T_OSI_NOTE SET NOTE_TYPE=:P5050_NOTE_CATEGORY,'||chr(10)||
+'                      NOTE_TEXT=:P5050_NOTE                      '||chr(10)||
+'WHERE SID=:P5050_SEL_NOTE;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 14371603188321312 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 10.2,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Save Note',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>':request like ''SAVE_%''',
+  p_process_when_type=>'PLSQL_EXPRESSION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'DELETE FROM T_OSI_NOTE WHERE SID=:P5050_SEL_NOTE;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 14372121674336162 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 10.3,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Delete Note',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>':request like ''DELETE_%''',
+  p_process_when_type=>'PLSQL_EXPRESSION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'UPDATE T_OSI_NOTE SET LOCK_MODE=''USER_LOCKED'' WHERE SID=:P5050_SEL_NOTE;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 17493624426944858 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 10.4,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Lock Note',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>':request like ''LOCK_%''',
+  p_process_when_type=>'PLSQL_EXPRESSION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'UPDATE T_OSI_NOTE N SET LOCK_MODE=(SELECT LOCK_MODE FROM T_OSI_NOTE_TYPE '||chr(10)||
+'                                     WHERE SID=N.NOTE_TYPE) '||chr(10)||
+' WHERE SID=:P5050_SEL_NOTE;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 17539504958033834 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 10.5,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Unlock Note',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>':request like ''UNLOCK_%''',
+  p_process_when_type=>'PLSQL_EXPRESSION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'P5050_SEL_NOTE,P5050_NOTE_CATEGORY,P5050_NOTE';
+
+wwv_flow_api.create_page_process(
+  p_id     => 89964135788303526 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 30,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'CLEAR_CACHE_FOR_ITEMS',
+  p_process_name=> 'Clear Note Fields',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>':REQUEST LIKE (''DELETE_%'') or :REQUEST like ''EDIT_%'''||chr(10)||
+'or :REQUEST like ''ADD_%''',
+  p_process_when_type=>'PLSQL_EXPRESSION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'if (:REQUEST like ''DIRECTLINK_%'') then'||chr(10)||
+''||chr(10)||
+'  :P5050_SEL_NOTE:= substr(:REQUEST,29);'||chr(10)||
+''||chr(10)||
+'else'||chr(10)||
+''||chr(10)||
+'  :P5050_SEL_NOTE:= substr(:REQUEST,6);'||chr(10)||
+''||chr(10)||
+'end if;'||chr(10)||
+''||chr(10)||
+'--:P5050_OBJ := :P5050_OBJ1;'||chr(10)||
+'begin'||chr(10)||
+'     select obj into :P5050_OBJ from t_osi_note where sid=:P5050_SEL_NOTE;'||chr(10)||
+''||chr(10)||
+'exception when others then'||chr(10)||
+'         null;'||chr(10)||
+'end;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 89964336670303526 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 40,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Select Note',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>':REQUEST like ''EDIT_%'' or :REQUEST like ''DIRECTLINK_%''',
+  p_process_when_type=>'PLSQL_EXPRESSION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'P5050_NOTE_CATEGORY,P5050_NOTE';
+
+wwv_flow_api.create_page_process(
+  p_id     => 2865210049660076 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 50,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'CLEAR_CACHE_FOR_ITEMS',
+  p_process_name=> 'Reset Fields',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>'CANCEL',
+  p_process_when_type=>'REQUEST_EQUALS_CONDITION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||':P5050_SEL_NOTE:=Null;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 7407719825314645 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 60,
+  p_process_point=> 'AFTER_SUBMIT',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Clear Selected',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>'UPDATE',
+  p_process_when_type=>'REQUEST_EQUALS_CONDITION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'declare'||chr(10)||
+'       v_tab_sid varchar2(20);'||chr(10)||
+'       v_obj_sid varchar2(20);'||chr(10)||
+'       --v_sup_sid varchar2(20);'||chr(10)||
+'       v_result  varchar2(20);'||chr(10)||
+'begin'||chr(10)||
+'     for a in (select column_value,rownum from table(split(''&REQUEST.'',''_'')))'||chr(10)||
+'     loop'||chr(10)||
+'         if (a.rownum=2) then'||chr(10)||
+''||chr(10)||
+'           --v_sup_sid := a.column_value;'||chr(10)||
+'           :P5050_SEL_NOTE := a.column_value;'||chr(10)||
+''||chr(10)||
+'         elsif (a.rownum=3) then'||chr(10)||
+''||chr(10)||
+'              v_ta';
+
+p:=p||'b_sid := a.column_value;'||chr(10)||
+''||chr(10)||
+'         elsif (a.rownum=4) then'||chr(10)||
+''||chr(10)||
+'              v_obj_sid := a.column_value;'||chr(10)||
+''||chr(10)||
+'         end if;'||chr(10)||
+' '||chr(10)||
+'     end loop;'||chr(10)||
+'     v_result:=osi_object.go_to_tab(''TAB_'' || v_tab_sid || ''_'' || v_obj_sid,:AUDITING,v_obj_sid,:p0_obj_type_sid,:p0_tabs,:tab_params,:tab_page,:tab_page_obj);'||chr(10)||
+''||chr(10)||
+'end;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 13815306041096020 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 5,
+  p_process_point=> 'BEFORE_HEADER',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Goto Tab and Select Support Object',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>':REQUEST LIKE ''DIRECTLINK%''',
+  p_process_when_type=>'PLSQL_EXPRESSION',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'F|#OWNER#:T_OSI_NOTE:P5050_SEL_NOTE:SID';
+
+wwv_flow_api.create_page_process(
+  p_id     => 90023210650264157 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 10,
+  p_process_point=> 'BEFORE_HEADER',
+  p_process_type=> 'DML_FETCH_ROW',
+  p_process_name=> 'ARF',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_when=>'P5050_SEL_NOTE',
+  p_process_when_type=>'ITEM_IS_NOT_NULL',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'declare'||chr(10)||
+'       v_cnt number;'||chr(10)||
+'begin'||chr(10)||
+'     if :P5050_OBJ1 is null then'||chr(10)||
+''||chr(10)||
+'       :P5050_OBJ1:=:P0_OBJ;'||chr(10)||
+''||chr(10)||
+'     end if;'||chr(10)||
+''||chr(10)||
+'     if (osi_note.get_note_status(:p5050_sel_note) in (''Locked'',''Locked by User'')) then'||chr(10)||
+''||chr(10)||
+'       --- This check is for notes locked due to a lock mode ---'||chr(10)||
+'      :p5050_note_status := ''readOnly style="background-color:#f5f4ea;width:99%"'';---:DISABLE_TEXTAREA;'||chr(10)||
+'      :p5050_note_cat_status ';
+
+p:=p||':= :DISABLE_SELECT;'||chr(10)||
+'      :p5050_status := ''Locked'';'||chr(10)||
+''||chr(10)||
+'     else'||chr(10)||
+''||chr(10)||
+'       --- Now we need to check to see if the note is from this                       ---'||chr(10)||
+'       --- object (if simply viewing another objects notes, they too must be locked). ---'||chr(10)||
+'       select count(sid) into v_cnt from t_osi_note where obj = :p0_obj and sid = :p5050_sel_note;'||chr(10)||
+''||chr(10)||
+'       if (v_cnt > 0 or :p5050_mode=''ADD'') then'||chr(10)||
+''||chr(10)||
+'      ';
+
+p:=p||'   :p5050_note_status := null;'||chr(10)||
+'         :p5050_note_cat_status := null;'||chr(10)||
+'         :p5050_status := ''Open'';'||chr(10)||
+'       '||chr(10)||
+'       else'||chr(10)||
+''||chr(10)||
+'         :p5050_note_status := ''readOnly style="background-color:#f5f4ea;width:99%"'';---:DISABLE_TEXTAREA;'||chr(10)||
+'         :p5050_note_cat_status := :DISABLE_SELECT;'||chr(10)||
+'         :p5050_status := osi_note.get_note_status(:p5050_sel_note);'||chr(10)||
+''||chr(10)||
+'       end if;'||chr(10)||
+''||chr(10)||
+'     end if;'||chr(10)||
+''||chr(10)||
+'     if (instr';
+
+p:=p||'(:p0_obj_type_code, ''FILE.'', 1, 1) > 0) then'||chr(10)||
+' '||chr(10)||
+'       :p5050_is_file := ''Y'';'||chr(10)||
+' '||chr(10)||
+'     else'||chr(10)||
+''||chr(10)||
+'       :p5050_is_file := ''N'';'||chr(10)||
+''||chr(10)||
+'     end if;'||chr(10)||
+''||chr(10)||
+'end;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 89963507774303517 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 20,
+  p_process_point=> 'BEFORE_HEADER',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Set Parameters',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'begin'||chr(10)||
+'    if (   osi_auth.check_for_priv(''TAB_NOTES'', :p0_obj_type_sid) = ''Y'''||chr(10)||
+'        or osi_auth.check_for_priv(''TAB_ALL'', :p0_obj_type_sid) = ''Y'') then'||chr(10)||
+'        :tab_enabled := ''Y'';'||chr(10)||
+'    else'||chr(10)||
+'        :tab_enabled := ''N'';'||chr(10)||
+'    end if;         '||chr(10)||
+'end;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 8125931831878909 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 40,
+  p_process_point=> 'BEFORE_HEADER',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'SetTabDisabler',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+declare
+  p varchar2(32767) := null;
+  l_clob clob;
+  l_length number := 1;
+begin
+p:=p||'declare'||chr(10)||
+'       P5050_ASSOC_NOTES         varchar2(300)   := :P5050_ASSOC_NOTES;'||chr(10)||
+'       P5050_REPORT_WHERE_CLAUSE varchar2(3000);'||chr(10)||
+'       p0_obj                    varchar2(20)    := :P0_obj;'||chr(10)||
+'       v_output                  varchar2(10000) := '' '';'||chr(10)||
+'begin'||chr(10)||
+'     if (instr(p5050_assoc_notes, ''ME'') > 0) then'||chr(10)||
+''||chr(10)||
+'       ---This File ---'||chr(10)||
+'       if (length(v_output) > 2) then'||chr(10)||
+''||chr(10)||
+'         v_output := v_output || ';
+
+p:=p||''' OR '';'||chr(10)||
+''||chr(10)||
+'       end if;'||chr(10)||
+''||chr(10)||
+'       v_output := v_output || '' N.OBJ = '''''' || p0_obj || '''''''';'||chr(10)||
+'       dbms_output.put_line(''This File'');'||chr(10)||
+''||chr(10)||
+'     end if;'||chr(10)||
+''||chr(10)||
+'     if (instr(p5050_assoc_notes, ''A_FILES'') > 0) then'||chr(10)||
+''||chr(10)||
+'       --- Associated Files ---'||chr(10)||
+'       if (length(v_output) > 2) then'||chr(10)||
+''||chr(10)||
+'         v_output := v_output || '' OR '';'||chr(10)||
+''||chr(10)||
+'       end if;'||chr(10)||
+''||chr(10)||
+'       v_output := v_output || '' (N.OBJ in (select THAT_FILE from v_o';
+
+p:=p||'si_assoc_fle_fle where this_file = '''''' || p0_obj || '''''')) '';'||chr(10)||
+'       dbms_output.put_line(''Associated Files'');'||chr(10)||
+''||chr(10)||
+'     end if;'||chr(10)||
+''||chr(10)||
+'     if (instr(p5050_assoc_notes, ''A_ACT'') > 0) then'||chr(10)||
+''||chr(10)||
+'       --- Associated Activities ---'||chr(10)||
+'       if (length(v_output) > 2) then'||chr(10)||
+''||chr(10)||
+'         v_output := v_output || '' OR '';'||chr(10)||
+''||chr(10)||
+'       end if;'||chr(10)||
+'        '||chr(10)||
+'       v_output := v_output || '' (N.OBJ in (select ACTIVITY_SID from v_osi_asso';
+
+p:=p||'c_fle_ACT where file_sid = '''''' || p0_obj || '''''')) '';'||chr(10)||
+'       dbms_output.put_line(''Associated Activities'');'||chr(10)||
+''||chr(10)||
+'     end if;'||chr(10)||
+''||chr(10)||
+'     if (instr(p5050_assoc_notes, ''I_ACT'') > 0) then'||chr(10)||
+''||chr(10)||
+'       --- Inherited Activities ---'||chr(10)||
+'       if (length(v_output) > 2) then'||chr(10)||
+''||chr(10)||
+'         v_output := v_output || '' OR '';'||chr(10)||
+''||chr(10)||
+'       end if;'||chr(10)||
+''||chr(10)||
+'       v_output := v_output || '' (N.OBJ in (select ACTIVITY_SID from v_osi_assoc_fle_ACT wh';
+
+p:=p||'ere file_sid in '||chr(10)||
+'                                           (select THAT_FILE from v_osi_assoc_fle_fle where this_file =  '''''' || p0_obj || ''''''))) '';'||chr(10)||
+''||chr(10)||
+'       dbms_output.put_line(''Inherited Activities'');'||chr(10)||
+''||chr(10)||
+'     end if;'||chr(10)||
+' '||chr(10)||
+'     if (length(v_output) > 2) then'||chr(10)||
+'    '||chr(10)||
+'       v_output := '' WHERE N.NOTE_TYPE = NT.sid AND ('' || v_output || '')'';'||chr(10)||
+''||chr(10)||
+'     else'||chr(10)||
+''||chr(10)||
+'       v_output := '' WHERE N.NOTE_TYPE = NT.sid and N';
+
+p:=p||'.OBJ = '''''' || p0_obj || '''''''';'||chr(10)||
+''||chr(10)||
+'       :p5050_assoc_notes := ''ME'';'||chr(10)||
+' '||chr(10)||
+'     end if;'||chr(10)||
+''||chr(10)||
+'     :P5050_REPORT_WHERE_CLAUSE := v_output;'||chr(10)||
+'     dbms_output.put_line(P5050_REPORT_WHERE_CLAUSE );'||chr(10)||
+''||chr(10)||
+'end;';
+
+wwv_flow_api.create_page_process(
+  p_id     => 95905309969953228 + wwv_flow_api.g_id_offset,
+  p_flow_id=> wwv_flow.g_flow_id,
+  p_flow_step_id => 5050,
+  p_process_sequence=> 50,
+  p_process_point=> 'BEFORE_HEADER',
+  p_process_type=> 'PLSQL',
+  p_process_name=> 'Create WHERE clause',
+  p_process_sql_clob => p, 
+  p_process_error_message=> '',
+  p_process_success_message=> '',
+  p_process_is_stateful_y_n=>'N',
+  p_process_comment=>'');
+end;
+null;
+ 
+end;
+/
+
+ 
+begin
+ 
+---------------------------------------
+-- ...updatable report columns for page 5050
+--
+ 
+begin
+ 
+null;
+end;
+null;
+ 
+end;
+/
+
+commit;
+begin 
+execute immediate 'alter session set nls_numeric_characters='''||wwv_flow_api.g_nls_numeric_chars||'''';
+end;
+/
+set verify on
+set feedback on
+prompt  ...done
+

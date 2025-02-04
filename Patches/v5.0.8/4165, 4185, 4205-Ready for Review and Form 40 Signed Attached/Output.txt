@@ -1,0 +1,16 @@
+Trigger altered.
+Table altered.
+Table altered.
+Table altered.
+PL/SQL procedure successfully completed.
+Trigger altered.
+View created.
+Trigger created.
+Package created.
+Package body created.
+PL/SQL procedure successfully completed.
+View created.
+View created.
+Package body created.
+Package body created.
+Trigger created.
