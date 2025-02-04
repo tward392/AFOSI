@@ -1,0 +1,132 @@
+Table altered.
+Commit complete.
+1 row updated.
+Commit complete.
+CREATE OR REPLACE PACKAGE "CORE_OBJ" as
+/*
+    Core_Obj: Utility routines to process/retrieve info about abstract Objects.
+
+    01-Nov-2005 RWH     Original version.
+    07-Nov-2005 RWH     Added Get_Desktop_Page_Num.
+    10-Nov-2005 RWH     Removed Get_Desktop_Page_Num. This function will be implemented
+                        in the Core_Desktop package.
+    01-Dec-2005 RWH     Added Bump.
+    03-Jan-2006 RWH     Added Get_Tagline.
+    04-Jan-2006 RWH     Added Index1 procedure (for DOC1 full text indexing).
+    10-Jan-2006 RWH     Added Lookup_ObjType function.
+    08-Feb-2006 RWH     Added Get_Status function.
+    03-Oct-2006 RWH     Added Dump_Index1 function. This is used mostly for debugging index
+                        routines.
+    30-Oct-2006 RWH     Added Get_Summary. This will work similarly to Get_Tagline, but will
+                        return a summary of the entire object. Typically, the output will be
+                        formatted HTML.
+    13-Dec-2006 JAF/RWH Added Get_Context_Description. Works similarly to Get_Tagline, returning
+                        a user-friendly context description based on the specified Object and
+                        Context.
+    18-Jan-2007 RWH     Added Index and Dump_Index routines for indexes 2 thru 5.
+    22-Apr-2011 TJW     CR#3829 - Added get_inherit_privs_flag.  
+
+*/  /*
+        Bump: This routine accomplishes 2 things. First, it causes the timestamp trigger
+            to fire for T_CORE_OBJ, and second, it will notify any full text index that
+            might be anchored to the DOC1 column.
+    */
+    procedure BUMP(P_OBJ in Varchar2);
+
+    /*
+        Dump_Index{n}: This routines calls the Index{n} routine with a temporary clob, and
+            then return that clob as the function result. Used for debugging index routines.
+    */
+    function DUMP_INDEX1(P_SID in Varchar2)
+        return Clob;
+
+    function DUMP_INDEX2(P_SID in Varchar2)
+        return Clob;
+
+    function DUMP_INDEX3(P_SID in Varchar2)
+        return Clob;
+
+    function DUMP_INDEX4(P_SID in Varchar2)
+        return Clob;
+
+    function DUMP_INDEX5(P_SID in Varchar2)
+        return Clob;
+
+    /*
+        Get_ACL: This routine returns the SID of the ACL for the specified object.
+    */
+    function GET_ACL(P_OBJ in Varchar2)
+        return Varchar2;
+
+    /*
+        Get_Context_Description:  This routine returns an identifying string for the specified
+        Object and Context. It does this by calling the Get_Context_Description function in the
+        Object Type's method package.
+    */
+    function GET_CONTEXT_DESCRIPTION(P_OBJ in Varchar2, P_OBJ_CONTEXT in Varchar2)
+        return Varchar2;
+
+    /*
+        Get_ObjType: This routines returns the SID of the Object Type for the specified
+            object.
+    */
+    function GET_OBJTYPE(P_OBJ in Varchar2)
+        return Varchar2;
+
+    /*
+        Get_Status: This routine returns the current status for the specified object.
+            It does this by calling the Get_Status function in the Object Type's
+            method package. The Object Type need not use the LifeCycle support object in
+            order to have "statuses".
+    */
+    function GET_STATUS(P_OBJ in Varchar2)
+        return Varchar2;
+
+    /*
+        Get_Summary: This routine returns a (read-only) summary for the specified object.
+            It does this by calling the Get_Summary function in the Object Type's method
+            package. The Variant parameter is optional, and is used by the specific Obj
+            Type's method routine to generate different "variants" of the output based on
+            the parameter. The Core routine does not examine this parameter, and passes it
+            to the method package routine unchanged.
+
+    */
+    function GET_summary(P_OBJ in Varchar2, p_variant in varchar2 := null)
+        return clob;
+
+    /*
+        Get_Tagline: This routine returns the user identifying string for the specified
+            object. It does this by calling the Get_Tagline function in the Object Type's
+            method package.
+    */
+    function GET_TAGLINE(P_OBJ in Varchar2)
+        return Varchar2;
+
+    /*
+        Index{n}: This abstract procedure is the document synthesis entry point for the
+            full text indexing mechanism. It maps the ROWID to a SID and then calls the
+            Index{n} procedure in the Object Type's method package.
+    */
+    procedure INDEX1(R in rowid, C in out nocopy Clob);
+
+    procedure INDEX2(R in rowid, C in out nocopy Clob);
+
+    procedure INDEX3(R in rowid, C in out nocopy Clob);
+
+    procedure INDEX4(R in rowid, C in out nocopy Clob);
+
+    procedure INDEX5(R in rowid, C in out nocopy Clob);
+
+    /*
+        Lookup_ObjType: This routine return the SID of the specified (by Code) Object Type.
+    */
+    function LOOKUP_OBJTYPE(P_OBJ_TYPE_CODE in Varchar2)
+        return Varchar2;
+
+    function get_inherit_privs_flag(p_obj_type_sid in varchar2) return varchar2;
+    
+end Core_Obj;
+Error at line 21
+ORA-00060: deadlock detected while waiting for resource
+
+Script Terminated on line 21 of \\Hqchati2ms\cm\Builds\v5.0.3\3829-Poly Exam Access and Creation Privileges\3829-Poly Exam Access and Creation Privileges.sql.
