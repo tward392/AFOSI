@@ -1,0 +1,61 @@
+8 rows updated.
+Commit complete.
+28 rows updated.
+Commit complete.
+2 rows updated.
+Commit complete.
+1 row updated.
+Commit complete.
+8 rows updated.
+Commit complete.
+2 rows updated.
+Commit complete.
+2 rows updated.
+Commit complete.
+3 rows updated.
+Commit complete.
+2 rows updated.
+Commit complete.
+2 rows updated.
+Commit complete.
+1 row updated.
+Commit complete.
+2 rows updated.
+Commit complete.
+1 row updated.
+Commit complete.
+2 rows updated.
+Commit complete.
+1 row updated.
+Commit complete.
+9 rows updated.
+Commit complete.
+2 rows updated.
+Commit complete.
+1 row updated.
+Commit complete.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 999
+...PAGE 999: EFunds-Launcher
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 1070
+...PAGE 1070: Desktop E-Funds Advances
+...done
+Package body created.
+Package body created.
+Commit complete.
