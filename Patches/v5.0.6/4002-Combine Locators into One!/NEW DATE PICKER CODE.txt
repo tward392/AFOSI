@@ -1,0 +1,28 @@
+$(document).ready(function()
+ {
+  var inputs = getElementsByClassName("datepickernew", "", document);
+    
+    for (var i=0;i<inputs.length;i++)
+       {
+        if (typeof inputs[i].type == "undefined")
+          {
+           inputs[i].className="datepickerdisabled";
+          }
+       }
+
+  $(".datepickernew").datepicker();
+  // Add a Today Link to each Date Picker //
+  $('input.datepickernew').datepicker().next('.ui-datepicker-trigger').after('<a href="#" class="pickToday"><img style="margen-left: 2px; vertical-align : bottom;" class="imgToday" src="#IMAGE_PREFIX#TodayR24.png" alt="Today" title="Today"></a>');
+  $('a.pickToday').click(function() {$(this).prev().prev('input.datepickernew').datepicker('setDate', new Date());});
+ });
+</script>
+
+<!-- Align the Calendar Image better -->
+<style>
+.ui-datepicker-trigger
+{
+ margin-left : 2px;
+ vertical-align : bottom;
+ cursor: pointer;
+}
+</style>
