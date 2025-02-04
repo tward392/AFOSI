@@ -1,0 +1,4 @@
+INSERT INTO T_CORE_CONFIG ( SID, CODE, SETTING, DESCRIPTION, CREATE_BY, CREATE_ON, MODIFY_BY, MODIFY_ON ) VALUES ( '33318L06', 'OSI.URL_EOF', 'http://www.au.af.mil/au/awc/awcgate/ucmj.htm', 'Elements of Offense URL', 'timothy.ward',  TO_Date( '04/03/2012 07:35:14 AM', 'MM/DD/YYYY HH:MI:SS AM'), 'timothy.ward',  TO_Date( '04/03/2012 07:35:40 AM', 'MM/DD/YYYY HH:MI:SS AM')); 
+INSERT INTO T_CORE_CONFIG ( SID, CODE, SETTING, DESCRIPTION, CREATE_BY, CREATE_ON, MODIFY_BY, MODIFY_ON ) VALUES ( '33318L07', 'OSI.URL_EOF18', 'http://www.law.cornell.edu/uscode/html/uscode18/usc_sup_01_18_10_I.html', 'USC Title 18 Elements of Offense URL', 'timothy.ward',  TO_Date( '04/03/2012 07:36:04 AM', 'MM/DD/YYYY HH:MI:SS AM'), 'timothy.ward',  TO_Date( '04/03/2012 07:36:52 AM', 'MM/DD/YYYY HH:MI:SS AM')); 
+COMMIT;
+
