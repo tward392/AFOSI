@@ -1,0 +1,24 @@
+Table altered.
+Table created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Index created.
+Trigger created.
+No errors.
+Trigger created.
+No errors.
+Trigger created.
+No errors.
+Table altered.
+Grant complete.
+Package body created.
+Package body created.
