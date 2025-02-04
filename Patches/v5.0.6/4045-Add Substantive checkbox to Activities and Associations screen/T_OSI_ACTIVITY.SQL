@@ -1,0 +1,1 @@
+alter table t_osi_activity add substantive varchar2(1);------ default 'N';

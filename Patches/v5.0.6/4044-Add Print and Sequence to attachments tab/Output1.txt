@@ -1,0 +1,9 @@
+Table created.
+Comment created.
+Comment created.
+Comment created.
+Comment created.
+Index created.
+Table altered.
+Table altered.
+Table altered.

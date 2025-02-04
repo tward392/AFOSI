@@ -1,0 +1,2 @@
+insert into t_osi_auth_role_priv (role,priv) select r.sid,p.sid from t_osi_auth_action_type t,t_osi_auth_priv p,t_osi_auth_role r where t.code='SURV.AAPP' and t.sid=p.action and r.code in ('AGTPERS','SUPPORT');
+COMMIT;  

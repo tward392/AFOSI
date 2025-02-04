@@ -1,0 +1,1 @@
+alter table t_osi_a_records_check_multi add substantive varchar2(1) default 'N';
