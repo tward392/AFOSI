@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+   <title>E-Funds Site Map</title>
+</head>
+
+<body >
+<INPUT TYPE="hidden" NAME="pUnit" ID="pUnit" VALUE="[WEBTOK@UNIT]">
+<INPUT TYPE="hidden" NAME="pFiscalYear" ID="pFiscalYear" VALUE="[WEBTOK@FISCAL_YEAR]">
+<!-- E-Funds Site Map -->
+ <table  align="left" border="0">
+   <tr>
+     <td colspan="4"><b>E-Funds Link Navigation: </b></td>        
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">E-Funds Home Page</td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Advances <font color="darkolivegreen">(Lists all Advances under currently selected unit)</font></td>
+   </tr> 
+   <tr>
+     <td colspan="2" width="60"> </td>
+     <td colspan="2">Advance Details <font color="darkolivegreen">(includes advance repayment listing)</font></td> 
+   </tr>
+   <tr>
+     <td colspan="3" width="90"> </td>
+     <td colspan="1">Advance Repayment Details</td> 
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Expenses by Personnel <font color="darkolivegreen">(Lists all Personnel with Expenses under currently selected unit)</font></td>           
+   </tr>
+   <tr>
+     <td colspan="2" width="60"> </td>
+     <td colspan="2">Expenses for Agent <font color="darkolivegreen">(Lists all Expenses for One Agent under currently selected unit)</font></td>          
+   </tr>
+   <tr>
+     <td colspan="3" width="90"> </td>
+     <td colspan="1">Expense Details</td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Transfers <font color="darkolivegreen">(a listing of Transfers showing new and old)</font></td>
+   </tr>
+   <tr>
+     <td colspan="2" width="60"> </td>
+     <td colspan="2">Transfer Details <font color="darkolivegreen">(read only)</font></td> 
+   </tr>          
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Send Working Funds <font color="darkolivegreen">(shows Transfer Details page - to initiate a new Transfer)</font></td>
+   </tr>      
+
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Transaction Log <font color="darkolivegreen">(Generates a form listing all expenditures for this fiscal year - like Form 28)</font></td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Custodian Change <font color="darkolivegreen">(Generates a form for audit or custodian change - like Form 29)</font></td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Payment Listings <font color="darkolivegreen">(View Listings or process Payment Listings to subordinate units)</font></td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Manage Limitations <font color="darkolivegreen">(Allows changes in limitations to be made for subordinate units)</font></td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Unit Setup <font color="darkolivegreen">(Allows changes to the units currently participating in efunds mangement activities)</font></td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Manage EFMS <font color="darkolivegreen">(HQ custodian only)(Edit EFT info and AFOSI limitations)</font></td>
+   </tr>
+   <tr>
+     <td width="30">&nbsp;</td>
+   </tr>
+
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">I2MS Home Page <font color="darkolivegreen">(www.I2MS.com)</font></td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Site Navigation</td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">New Features <font color="darkolivegreen">(details of EFMS improvements - updated frequently)</font></td>
+   </tr>
+   <tr>
+     <td width="30"> </td>
+     <td colspan="3">Help <font color="darkolivegreen">(large help file should be downloaded and used separate from EFMS)</font></td>
+   </tr>
+ </table>
+</body>
+</html>
+

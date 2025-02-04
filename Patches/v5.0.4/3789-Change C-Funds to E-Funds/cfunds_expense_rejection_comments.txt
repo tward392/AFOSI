@@ -1,0 +1,48 @@
+<!--Expense Rejection Comments -->
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>EMERGENCY AND EXTRAORDINARY FUNDS EXPENSE REJECTION COMMENTS</title>
+
+<script language="Javascript" type="text/javascript">
+<!--
+function msgbox(pMsg)
+{
+    window.alert(pMsg);
+}
+// -->
+</script>
+</head>
+<body>
+
+<form method="POST" action=[WEBTOK@SELF]>
+
+<INPUT TYPE="hidden" NAME="pSID" VALUE="[WEBTOK@SID]">
+<INPUT TYPE="hidden" NAME="pAction" VALUE="[WEBTOK@ACTION]">
+<INPUT TYPE="hidden" NAME="pUnit" VALUE="[WEBTOK@UNIT_SID]">
+<INPUT TYPE="hidden" NAME="pParams" VALUE="[WEBTOK@PPARAMS]">
+<INPUT TYPE="hidden" NAME="pPerSid" VALUE="[WEBTOK@PER_SID]">
+[WEBTOK@REPAYMENT_PARAMS]
+
+<h3>[WEBTOK@TOP_LABEL]</h3><br>
+<table>
+   <tr>
+      <td><input type='submit' value='OK' name="pCommand"></td>
+      <td><input type='submit' value='Cancel' name="pCommand"></td>
+   </tr>
+</table>
+<table>
+   <tr>
+      <td>[WEBTOK@TEXTAREA_LABEL]</td>
+   </tr>
+   <tr>
+      <td><textarea rows=5 cols=56 name="pRejection_Comments">[WEBTOK@FEEDBACK]</textarea></td>
+   </tr>
+</table> 
+
+</form>
+</body>
+</html>

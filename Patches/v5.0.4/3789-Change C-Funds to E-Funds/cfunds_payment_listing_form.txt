@@ -1,0 +1,119 @@
+<!-- Payment Listing Form -->
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>E-FUNDS PAYMENT LISTING REPORT</title>
+</head>
+
+<body>
+
+<div align="left">
+  <table border="0" width="100%" height="306">
+ <head>
+    <style media="print">
+       thead { display: table-header-group; }
+     tfoot { display: table-footer-group; }
+    </style>
+ </head>   
+ <tr>
+  <thead align="center" class="header" valign="top" >
+  <td><font face="Arial" size="4">For Official Use Only</td>
+  </thead>
+ </tr>
+ <tr>
+  <tfoot align="center" class="footer" valign="bottom" >
+  <td><font face="Arial" size="4">For Official Use Only</td>
+  </tfoot>
+ </tr>
+
+<!-- insert eft info here if needed -->
+[WEBTOK@EFT_INFO_SECTION]
+
+<!-- start payment listing part here -->
+    <tr>
+      <td width="100%" height="26">
+        <p align="center"><font size="4" face="Arial">PAYMENT LISTING: [WEBTOK@PL_ID_NUMBER]</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="26">
+        <p align="center"><font size="4" face="Arial">FISCAL YEAR: [WEBTOK@FISCAL_YEAR]</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="26">
+        <p align="center"><font size="4" face="Arial">[WEBTOK@UNIT_NAME_2]</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="26">
+        <p align="left"><font size="4" face="Arial">[WEBTOK@SYSTEM_DATE]</font></td>
+    </tr>
+    <tr>
+      <td valign= "top">
+
+
+<table border="1" width="100%">
+
+  <tr>
+    <td nowrap width="20%"><font face="Arial" size="1">
+      DET</font></td>
+    <td nowrap width="20%"><font face="Arial" size="1">
+      EXPENSE ID</font></td>
+    <td nowrap width="20%"><font face="Arial" size="1">
+     CATEGORY</font></td>
+    <td nowrap width="20%"><font face="Arial" size="1">
+     PAID BY</font></td>
+    <td nowrap width="20%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+
+[WEBTOK@EXPENSE_LIST]
+
+<TR>
+<TD height="50"></TD>
+</TR>
+
+<TR>
+<TD height="50"></TD>
+</TR>
+
+<TR>
+<TD colspan="3"></TD>
+<TD>TOTAL S&IA</TD>
+<TD align="right">[WEBTOK@SIA_TOTAL]</TD>
+</TR>
+
+<TR>
+<TD colspan="3"></TD>
+<TD>TOTAL CI</TD>
+<TD align="right">[WEBTOK@CI_TOTAL]</TD>
+</TR>
+
+<TR>
+<TD colspan="3"></TD>
+<TD>TOTAL FPD</TD>
+<TD align="right">[WEBTOK@FPD_TOTAL]</TD>
+</TR>
+
+<TR>
+<TD height="24"></TD>
+</TR>
+
+<TR>
+<TD colspan="3"></TD>
+<TD>TOTAL</TD>
+<TD align="right">[WEBTOK@EXPENSE_TOTAL]</TD>
+</TR>
+
+</table>
+
+      </td>
+    </tr>
+
+  </table>
+</div>
+
+</body>
+
+</html>

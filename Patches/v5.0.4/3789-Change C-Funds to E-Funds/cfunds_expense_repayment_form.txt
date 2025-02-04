@@ -1,0 +1,122 @@
+<!--Expense Repayment Form -->
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>EMERGENCY AND EXTRAORDINARY FUNDS EXPENSE REPAYMENT</title>
+</head>
+
+<body>
+
+<div align="left">
+  <table border="0" width="100%" height="306">
+    <tr>
+      <td width="100%" height="26">
+        <p align="center"><font size="4" face="Arial">EMERGENCY AND EXTRAORDINARY FUNDS EXPENSE REPAYMENT</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="51">
+        <p align="center"><font size="4" face="Arial">I. EXPENSE</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="20">
+        <div align="left">
+          <table border="0" width="100%" height="34">
+            <tr>
+              <td width="50%"  height="34"><font size="2" face="Arial">EXPENSE VOUCHER
+        NUMBER: </font><font face="Arial" size="3">
+                [WEBTOK@VOUCHER_NO]</font></td>
+          <td width="50%" height="34"><font size="2" face="Arial">EXPENSE DATE:
+                </font><font face="Arial" size="3">
+                [WEBTOK@DATE]</font></td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td width="100%" height="51">
+        <p align="center"><font face="Arial" size="4">II. EXPENSE REPAYMENT DETAILS</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="20">
+        <div align="center">
+          <center>
+          <table border="0" width="100%" height="64">
+            <tr>
+              <td width="50%"  height="34"><font size="2" face="Arial">EXPENSE REPAYMENT VOUCHER
+        NUMBER: </font><font face="Arial" size="3">
+                [WEBTOK@REPAYMENT_VOUCHER_NO]</font></td>
+          <td width="50%" height="34"><font size="2" face="Arial">REPAYMENT DATE:
+                </font><font face="Arial" size="3">
+                [WEBTOK@REPAYMENT_DATE]</font></td>
+            </tr>
+            <tr>
+              <td width="50%" height="34"><font face="Arial" size="2">CASH AMOUNT:</font><font face="Arial" size="3">
+                        [WEBTOK@CASH_AMOUNT]</font></td>
+              <td width="50%"></td>
+            </tr>
+            <tr>
+              <td width="50%" height="34"><font face="Arial" size="2">CHECK AMOUNT:</font><font face="Arial" size="3">
+                         [WEBTOK@CHECK_AMOUNT]</font></td>
+              <td width="50%"></td>
+            </tr>
+            <tr>
+              <td width="50%" height="34"><font face="Arial" size="2">CHECK
+                NUMBER:</font><font face="Arial" size="3">
+                        [WEBTOK@CHECK_NUMBER]</font></td>
+              <td width="50%"></td>
+            </tr>
+          </table>
+          </center>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td width="100%" height="51">
+        <p align="center"><font face="Arial" size="4">III. SIGNATURES</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="20">
+        <div align="center">
+          <center>
+          <table border="0" width="100%">
+            <tr>
+              <td width="24%" height="46" valign="bottom"><font face="Arial" size="1">________________</font></td>
+              <td width="76%" height="46" valign="bottom"><font face="Arial" size="3">
+                [WEBTOK@CLAIMANT_NAME_UNIT]</font></td>
+              <td width="50%" height="46" valign="bottom"><font face="Arial" size="1">__________________________________</font></td>
+            </tr>
+            <tr>
+              <td width="24%" height="41" valign="top"><font face="Arial" size="1">DATE</font></td>
+              <td width="76%" height="41" valign="top"><font face="Arial" size="1">NAME
+                AND UNIT OF CLAIMANT</font></td>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">SIGNATURE
+                OF CLAIMANT</font></td>
+            </tr>
+            <tr>
+              <td width="24%" height="46" valign="bottom"><font face="Arial" size="1">________________</font></td>
+              <td width="76%" height="46" valign="bottom"><font face="Arial" size="3">
+                [WEBTOK@CFUNDS_CUST_NAME_UNIT]</font></td>
+              <td width="50%" height="46" valign="bottom"><font face="Arial" size="1">__________________________________</font></td>
+            </tr>
+            <tr>
+              <td width="24%" height="41" valign="top"><font face="Arial" size="1">DATE</font></td>
+              <td width="76%" height="41" valign="top"><font face="Arial" size="1">NAME
+                AND UNIT OF E-FUNDS CUSTODIAN</font></td>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">SIGNATURE
+                OF E-FUNDS CUSTODIAN</font></td>
+            </tr>
+          </table>
+          </center>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+</body>
+
+</html>

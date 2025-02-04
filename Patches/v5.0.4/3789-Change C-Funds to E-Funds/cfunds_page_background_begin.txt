@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Pragma" content="no-cache">
+<!-- Pragma content set to no-cache tells the browser not to cache the page
+This may or may not work in IE -->
+<meta http-equiv="expires" content="0">
+<!-- Does same thing, tries to disable cache. -->
+
+<title>[WEBTOK@PAGE_TITLE]</title>
+
+<script language="vbscript" type="text/vbscript">
+<!--
+
+Dim pUnitSid
+Dim pVParams
+Dim pFiscalYear
+
+Sub SetVParams(pVP)
+    pVParams = pVP
+End Sub
+
+Sub SetUnitSid(pUS)
+    pUnitSid = pUS
+End Sub
+
+Sub SetFiscalYear(pFY)
+    pFiscalYear = pFY
+End Sub
+
+Function PreviousButton(pValue)
+    Dim pUrl
+    dim pFY
+    
+    ' There should always be a fiscal year, so include it.
+    pFY = "&pFiscalYear=" & pFiscalYear
+
+    ' Checking for special vparams strings and associated pages.  If there is a dash in the string
+    ' then replace those items with a =checked& characters.  This is for the filter 
+    ' values carrying forward to pages down stream.
+    if InStr(1,pValue,"advance_details") > 0 then 
+        pUrl = pValue & "&pUnit=" & pUnitSid & "&pParams=" & pVParams
+    ElseIf InStr(1,pValue,"Expenses_For_Indiv") > 0 then
+        pVParams = replace(pVParams,"-","=checked&")
+        pVParams = "&" & pVParams & "=checked"
+        pUrl = pValue & "&pUnit=" & pUnitSid & pVParams
+    ElseIf InStr(1,pValue,"advances_by_personnel") > 0 then
+        pVParams = replace(pVParams,"-","=checked&")
+        pVParams = "&" & pVParams & "=checked"
+        pUrl = pValue & "?pUnit=" & pUnitSid & pVParams
+    Else    
+        ' This is the case where you are calling pages that have filters but that have been 
+        ' carried forward.
+        if InStr(1,pVParams,"-") > 0 then
+            pVParams = replace(pVParams,"-","=checked&")
+            pVParams = "&" & pVParams & "=checked"
+            pUrl = pValue & "?pUnit=" & pUnitSid & pVParams
+        else
+            pUrl = pValue & "?pUnit=" & pUnitSid & pVParams
+        end if
+    End If
+    ' add the fiscal year on        
+    pUrl = pUrl & pFY
+
+    If InStr(1,pValue,"DoHistory") > 0 then
+        window.history.back()     
+    Else
+        window.location.href = pUrl
+    End If
+
+End Function
+
+sub OpenNewWindow(pUrl)
+    window.open pUrl, "PrintableForm", "height=470,width=780,resizable=yes,scrollbars=yes,toolbar=yes,false" 
+end sub
+
+'This is a generic function that if you give the page you want to go to then this function will add the unit sid to the call.
+Function MenuLinks(pPage)
+    Dim pUrl
+
+    pUrl =  pPage & "pUnit=" &  pUnitSid & "&pFiscalYear=" & pFiscalYear 
+
+    'Go to the next page
+    window.location.href = pUrl
+
+End Function
+
+Sub SelectFiscalYear_onchange()
+    Dim pUrl
+    Dim pos
+    Dim pos2
+    ' Set the location url 
+    pUrl = window.self.location 
+
+    'Set the global Fiscal Year variable  -- located in the cfunds_page_background_begin template
+    SetFiscalYear(document.HomePage.SelectFiscalYear(document.HomePage.SelectFiscalYear.selectedIndex).value)
+    ' Check and see if the url has a pUnit and/or a pFiscalYear already.  if so then change it to the current pUnit & pFiscalYear.
+    pos = InStr(1,pUrl,"?")
+    pos2 = InStr(1,pUrl,"&")
+    if pos2 > 0 then
+        pUrl = Mid(pUrl,1,pos2-1)
+    end if
+    if pos > 0 then
+        pUrl = Mid(pUrl,1,pos-1)
+    end if
+    window.location.href = pUrl & "?pUnit=" & pUnitSid & "&pFiscalYear=" & pFiscalYear
+End Sub
+
+Sub doMsg(message, title)
+    ' Shows a message box with the given message.
+    ' To pass a parameter from the code, you need to put &quot; around the message part.
+    ' Here's an example of how to launch this from a label:
+    '<a href="javascript:void(0)" onclick="doMsg &quot;my new message&quot;">Here</a>
+    msgbox message,65,title
+    window.event.returnValue=False
+End Sub
+
+
+// -->
+</script>
+
+<script language="Javascript" type="text/javascript">
+<!--
+
+function msgbox(pMsg)
+{
+    window.alert(pMsg);
+}
+
+function PrintForm(Url)
+{
+    window.open(Url,"","top=100,left=100,screenx=100, screeny=100,height=600,width=1100,resizable=yes,scrollbars=yes,toolbar=yes",false);
+}
+
+/* This is a generic function that if you give the page you want to open in a new window
+   then this function will add the unit sid and fiscal year to the call.
+   This requires that the form has these elements specified (pUnit and pFiscalYear). */
+function MenuLinksToPopup(pUrl)
+{
+    // alert(document.getElementById('pFiscalYear').value);
+    //alert(document.getElementById('pUnit').value);  // use for debugging only
+    PrintForm(pUrl + 'pUnit=' + document.getElementById('pUnit').value + '&pFiscalYear=' + document.getElementById('pFiscalYear').value);
+}
+
+// -->
+</script>
+
+<link rel="stylesheet" href="/styles/I2ms/datastyles.css" media="screen" type="text/css">
+</head>
+
+<body background="/images/I2ms/100outer_border.bmp">
+
+<table  border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+  <tr height="37">
+    <td><img border="0" src="/images/I2ms/100top_left_a_3.bmp" width="25" height="37"></td>
+    <td><a href="[WEBTOK@HOME_PAGE]"><img border="0" src="/images/I2ms/100top_left_b_3.bmp" width="179" height="37" alt="E-Funds Home Page"></a></td>
+    <td width="87%" background="/images/I2ms/100top_repeat_3.bmp"></td>
+  </tr>
+  <tr>
+    <td width="25" background="/images/I2ms/100left_repeat_2.bmp"></td>
+
+    [WEBTOK@SINGLE_CELL_GUTS_START]<td valign="top" colspan="2"  background="/images/I2ms/100middle.bmp">
+[WEBTOK@MENU_LIST][WEBTOK@SINGLE_CELL_GUTS_END]
+
+
+   [WEBTOK@DUAL_CELL_GUTS_START]<td valign="top" width="179" background="/images/I2ms/100middle.bmp"> 
+[WEBTOK@MENU_LIST]</td>
+    <td valign="top" background="/images/I2ms/100middle.bmp">[WEBTOK@DUAL_CELL_GUTS_END]
+
+[WEBTOK@BEGIN_HEADER_TABLE]
+<table cellpadding="0" cellspacing="0" width="80%" border="0">
+  <tr>
+   <!-- <td width="20%"></td>-->
+    <td><center><h1>[WEBTOK@HEADER1_HEADER_TABLE]</h1></center></td>
+   <!--  <td width="20%"></td>-->
+  </tr>
+  <tr>
+   <!--  <td width="20%">[WEBTOK@BACK_BUTTON]</td>-->
+    <td><center><h2>[WEBTOK@HEADER2_HEADER_TABLE]</h2></center></td>
+   <!--  <td width="20%"></td>-->
+  </tr>
+</table>
+<br>
+[WEBTOK@END_HEADER_TABLE]
+
+<!-- content of page goes here, complete html tags by calling a different procedure and template-->

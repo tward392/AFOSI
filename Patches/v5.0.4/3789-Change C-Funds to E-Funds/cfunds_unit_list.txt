@@ -1,0 +1,44 @@
+<!-- Unit List <html> -->
+
+<SCRIPT LANGUAGE="VBscript">
+<!--
+function Do_Refresh()
+    document.frmMain.pCommand.value = "Refresh"
+    document.frmMain.pUnit.value = document.frmMain.pUnitPick.value
+    document.frmMain.submit
+end function
+
+function Do_Update()
+    document.frmMain.pCommand.value = "Update"
+    document.frmMain.pUnit.value = document.frmMain.pUnitPick.value
+    document.frmMain.submit
+end function
+-->
+</SCRIPT>
+
+[WEBTOK@FEEDBACK]
+<form  method="post" action=[WEBTOK@SELF] name=frmMain>
+<input type="hidden" name="pCommand" value="Refresh">
+<input type="hidden" name="pUnit" value="[WEBTOK@UNIT]">
+<input type="hidden" name="pFiscalYear" value="[WEBTOK@FISCAL_YEAR]">
+<table border="0">
+  <tr>
+    <td>Starting Unit: </td>
+    <td>
+        [WEBTOK@UNIT_PICK_LIST]
+    </td>
+    <td vAlign=center>&nbsp;&nbsp;&nbsp;<input type="button" value="Refresh" name="pBtnRefresh" onclick="Do_Refresh()"></td>
+    <td vAlign=center>&nbsp;&nbsp;&nbsp;<input type="button" value="Update" name="pBtnUpdate" onclick="Do_Update()"></td>
+  </tr>
+</table>
+
+<table border="1">
+  <tr>
+    <th>Unit Name</th>
+    <th>E-Funds?</th>
+    <th>Reviewer?</th>
+    <th>Active?</th>
+  </tr>
+  [WEBTOK@UNIT_SET_LIST]
+</table>
+</form> 

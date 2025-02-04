@@ -1,0 +1,53 @@
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+Commit complete.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+Commit complete.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+1 row created.
+Commit complete.
+INSERT INTO T_OSI_AUTH_ROLE ( SID, CODE, DESCRIPTION, KEEP_ON_TRANSFER, COMMON_GRANT, ALLOW_TOP, MAX_PER_SQD, MAX_PER_RGN, MAX_PER_UNIT, MAX_PER_HQ, AGENT_ONLY, GRANT_PRIV, COMPLETE_DESC, RPT_DESCR, RPT_PRIORITY, RPT_SIGNATURE ) VALUES ( '33317VDC', 'IOCAGENT', 'IOC Agent', NULL, NULL, 'N', NULL, NULL, NULL, NULL, 'N', '33317VQP', 'IOCAGENT:  IOC Agent', NULL, NULL, NULL)
+Error at line 56
+ORA-02291: integrity constraint (WEBI2MS.FK_OSI_UNTRLE_PRV) violated - parent key not found
+
+Script Terminated on line 56 of \\hqcuiwebi2ms\CM\Builds\v5.0.4\3852, 3853, and 3854 - IOC Roles Privs and New Consultation Types\3852, 3853, and 3854 - IOC Roles Privs and New Consultation Types.sql.

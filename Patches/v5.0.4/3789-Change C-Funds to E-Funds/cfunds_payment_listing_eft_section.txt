@@ -1,0 +1,77 @@
+    <tr>
+      <td width="100%" height="26">
+        <p align="center"><font size="4" face="Arial">E-FUNDS PAYMENT LISTING REPORT</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="20">
+        <div align="center">
+          <table border="1" width="70%">
+
+
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="2">PAYMENT [WEBTOK@ID_NUMBER], [WEBTOK@LISTING_DATE]</font></td>
+              <td width="35%" height="24"><font face="Arial" size="2">PAYMENT</font></td>
+            </tr>
+
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="2">UNIT: [WEBTOK@UNIT_NAME]</font></td>
+              <td width="35%" height="24"><font face="Arial" size="2">FISCAL YEAR: [WEBTOK@FISCAL_YEAR]</font></td>
+            </tr>
+
+            <tr>
+              <td width="65%" height="24">
+            </tr>
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="3">MAKE THE FOLLOWING EFT'S TO:</font></td>
+            </tr>
+            <tr>
+              <td width="65%" height="24">
+            </tr>
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="2"> [WEBTOK@UNIT_NAME_TWO]</font></td>
+            </tr>
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="2">[WEBTOK@ROUTING_NUM]</font></td>
+            </tr>
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="2"> [WEBTOK@ACCOUNT_NUM]</font></td>
+            </tr>
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="2"> [WEBTOK@ACCOUNT_DESC]</font></td>
+            </tr>
+            <tr>
+              <td width="65%" height="24">
+            </tr>
+
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="3">BA 04 PEC: 35146</font></td>
+              <td width="35%" height="24" align="right"><font face="Arial" size="3">[WEBTOK@FPD_TOTAL_ONE]</font></td>
+            </tr>
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="3">BA 04 PEC: 35127</font></td>
+              <td width="35%" height="24" align="right"><font face="Arial" size="3">[WEBTOK@CI_TOTAL_ONE]</font></td>
+            </tr>
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="3">BA 04 PEC: 35128</font></td>
+              <td width="35%" height="24" align="right"><font face="Arial" size="3">[WEBTOK@SIA_TOTAL_ONE]</font></td>
+            </tr>
+
+            <tr>
+              <td width="65%" height="24">
+            </tr>
+
+            <tr>
+              <td width="65%" height="24"><font face="Arial" size="3">TOTAL EFT</font></td>
+              <td width="35%" height="24" align="right"><font face="Arial" size="3">[WEBTOK@TOTAL]</font></td>
+            </tr>
+
+          </table>
+        </div>
+      </td>
+    </tr>
+
+ <tr>
+ <td height="420"></td>
+ </tr>
+
+    <tr><td height="100"></td></tr>
