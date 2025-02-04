@@ -1,0 +1,30 @@
+//<![CDATA[
+document.write('<script type="text/javascript" src="'+imgPrefix+'jQuery/js/jquery-1.8.3.min.js"></script>\n');
+document.write('<!-- Begin JQuery/Hover help stuff -->\n');
+document.write('<link rel="stylesheet" type="text/css" href="'+imgPrefix+'jquery/css/redmond1.9.1/jquery-ui-1.9.1.custom.css" />\n');
+document.write('\n');
+document.write('<script type="text/javascript" src="'+imgPrefix+'jQuery/js/jquery-ui-1.9.1.custom.min.js"></script>\n');
+document.write('\n');
+document.write('<link rel="stylesheet" type="text/css" href="'+imgPrefix+'javascript/StatusBar.css" />\n');
+document.write('<script type="text/javascript" src="'+imgPrefix+'javascript/StatusBar.js"></script>\n');
+document.write('\n');
+document.write('<script type="text/javascript" src="'+imgPrefix+'jQuery/jquery-datetimepicker.js"></script>\n');
+document.write('<link href="'+imgPrefix+'jquery/jquery-datetimepicker-extras.css" type="text/css" rel="stylesheet" />\n');
+document.write('\n');
+document.write('<link href="'+imgPrefix+'jquery/cluetip-1.2.2/jquery.cluetip.css" type="text/css" rel="stylesheet" />\n');
+document.write('<script src="'+imgPrefix+'jquery/cluetip-1.2.2/jquery.cluetip.js" type="text/javascript"></script>\n');
+document.write('<script src="'+imgPrefix+'jquery/jquery-hoverhelp.js" type="text/javascript"></script>\n');
+document.write('\n');
+document.write('<!-- End JQuery/Hover help stuff -->\n');
+document.write('<!-- JQuery/Superfish Menu Stuff --->\n');
+document.write('<link rel="stylesheet" type="text/css" href="'+imgPrefix+'jQuery/superfish-1.4.8/css/superfish.css" media="screen">\n');
+document.write('<script type="text/javascript" src="'+imgPrefix+'jQuery/jquery.hoverIntent.minified.js"></script>\n');
+document.write('<script type="text/javascript" src="'+imgPrefix+'jQuery/superfish-1.4.8/js/superfish.js"></script>\n');
+document.write('<script type="text/javascript" src="'+imgPrefix+'jQuery/superfish-1.4.8/js/supersubs.js"></script>\n');
+document.write('<script src="'+imgPrefix+'jQuery/superfish-i2ms.js" type="text/javascript"></script>\n');
+document.write('<!-- END JQuery/Superfish Menu Stuff --->\n');
+document.write('<!-- Begin JQuery/Tipsy ToolTip Stuff -->\n');
+document.write('<script type="text/javascript" src="'+imgPrefix+'jQuery/tipsy-v1.0.0a-24/src/javascripts/jquery.tipsy.js"></script>\n');
+document.write('<link rel="stylesheet" href="'+imgPrefix+'jQuery/tipsy-v1.0.0a-24/src/stylesheets/tipsy.css" type="text/css" />\n');
+document.write('<!--   End JQuery/Tipsy ToolTip Stuff -->\n');
+//]]> 

@@ -1,0 +1,77 @@
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+***************** USE THIS NOW ************************************************************************************************
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+<script src="#IMAGE_PREFIX#jQuery/jQueryIncludes.js" type="text/javascript"></script>
+
+
+
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+***************** INSTEAD OF BELOW ********************************************************************************************
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+*******************************************************************************************************************************
+
+<!-- Begin JQuery/Hover help stuff -->
+<link rel="stylesheet" type="text/css" href="#IMAGE_PREFIX#jquery/css/redmond1.8.20/jquery-ui-1.8.20.custom.css" />
+
+<script type="text/javascript" src="#IMAGE_PREFIX#jQuery/js/jquery-1.7.2.min.js"></script>
+
+<script type="text/javascript" src="#IMAGE_PREFIX#jQuery/js/jquery-ui-1.8.20.custom.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="#IMAGE_PREFIX#javascript/StatusBar.css" />
+<script type="text/javascript" src="#IMAGE_PREFIX#javascript/StatusBar.js"></script>
+
+<script type="text/javascript">
+function getElementsByClassName(className, tag, elm){
+ var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
+ var tag = tag || "*";
+ var elm = elm || document;
+ var elements = (tag == "*" && elm.all)? elm.all : elm.getElementsByTagName(tag);
+ var returnElements = [];
+ var current;
+ var length = elements.length;
+ for(var i=0; i<length; i++){
+  current = elements[i];
+  if(testClass.test(current.className)){
+   returnElements.push(current);
+  }
+ }
+ return returnElements;
+}
+</script>
+
+<script type="text/javascript" src="#IMAGE_PREFIX#jQuery/jquery-datetimepicker.js"></script>
+<link href="#IMAGE_PREFIX#jquery/jquery-datetimepicker-extras.css" type="text/css" rel="stylesheet" />
+
+<link href="#IMAGE_PREFIX#jquery/cluetip-1.2.2/jquery.cluetip.css" type="text/css" rel="stylesheet" />
+<script src="#IMAGE_PREFIX#jquery/cluetip-1.2.2/jquery.cluetip.js" type="text/javascript"></script>
+<script src="#IMAGE_PREFIX#jquery/jquery-hoverhelp.js" type="text/javascript"></script>
+ 
+<!-- End JQuery/Hover help stuff -->
+<!-- JQuery/Superfish Menu Stuff --->
+<link rel="stylesheet" type="text/css" href="#IMAGE_PREFIX#jQuery/superfish-1.4.8/css/superfish.css" media="screen">
+<script type="text/javascript" src="#IMAGE_PREFIX#jQuery/superfish-1.4.8/js/superfish.js"></script>
+<script type="text/javascript" src="#IMAGE_PREFIX#jQuery/superfish-1.4.8/js/supersubs.js"></script>
+<script type="text/javascript">
+ 
+ $(document).ready(function(){ 
+     $("ul.sf-menu").supersubs({ 
+         minWidth:    12,   // minimum width of sub-menus in em units 
+         maxWidth:    27,   // maximum width of sub-menus in em units 
+         extraWidth:  1     // extra width can ensure lines don't sometimes turn over 
+                            // due to slight rounding differences and font-family 
+     }).superfish();  // call supersubs first, then superfish, so that subs are 
+                      // not display:none when measuring. Call before initialising 
+                      // containing tabs for same reason. 
+
+ });  
+</script>
+<!-- END JQuery/Superfish Menu Stuff --->
