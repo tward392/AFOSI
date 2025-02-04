@@ -1,0 +1,81 @@
+Package body created.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+Component Export: PAGE TEMPLATE 93856707457736574
+...page templates for application: 100
+......Page template 93856707457736574
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 21406
+...PAGE 21406: Required Comment Capture
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 30460
+...PAGE 30460: Personnel Assigned Permissions
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 30045
+...PAGE 30045: Participant Relationships
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 5450
+...PAGE 5450: Status Change Widget
+...done
+4 rows updated.
+Commit complete.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+...Remove page 550
+...PAGE 550: Locate Offenses
+...done
