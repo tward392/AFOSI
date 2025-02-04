@@ -1,0 +1,6 @@
+1 row created.
+COMMIT;COMMIT
+Error at line 2
+ORA-00911: invalid character
+
+Script Terminated on line 2 of \\Hqchati2ms\cm\Builds\v5.0.0\post release fixes\3451-Add Annual Inventory Type to EMM\databasechanges.sql.

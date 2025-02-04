@@ -1,0 +1,795 @@
+<!-- Form 29 -->
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>[WEBTOK@TITLE]</title>
+</head>
+
+<body>
+
+<!--<div align="left">-->
+  <table border="0" width="100%" height="306">
+    <head>
+          <style media="print">
+                   thead { display: table-header-group; }
+                 tfoot { display: table-footer-group; }
+          </style>
+    </head>         
+    <tr>
+        <thead align="center" class="header" valign="top" >
+        <td><font face="Arial" size="4">For Official Use Only</td>
+        </thead>
+    </tr>
+    <tr>
+        <tfoot align="center" class="footer" valign="bottom" >
+        <td><font face="Arial" size="4">For Official Use Only</td>
+        </tfoot>
+    </tr>
+    <tr>
+      <td width="100%" height="26">
+        <p align="center"><font size="4" face="Arial">[WEBTOK@HEADING]</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="26">
+        <p align="center"><font size="4" face="Arial">FISCAL YEAR:  [WEBTOK@FISCAL_YEAR]</font></td>
+    </tr>
+    <tr>
+    <td>
+          <table border="0" width="100%" height="36">
+            <tr>
+      <td width="50%" height="34" ><font size="2" face="Arial">UNIT: </font><font face="Arial" size="3">[WEBTOK@UNIT]</font></td>
+      <td width="50%"><font face="Arial" size="2">STATUS OF ACCOUNT AS OF: </font><font face="Arial" size="3">[WEBTOK@TODAYS_DATE]</font></td>
+            </TR>    
+          </table>
+    </td>
+    </tr>
+    <tr>
+      <td width="100%" height="51">
+        <p align="center"><font size="4" face="Arial">I. ACCOUNTABLE FUNDS</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="20">
+      
+<!-- Part I Accountable Funds -->
+<table border="0" width="100%">
+  <tr>
+
+    <td nowrap colspan="2" align="LEFT" width="55%"><font face="Arial" size="3"><b>
+      A. WORKING FUND TRANSFERS</b></font></td>
+        <td></td>
+  </tr>
+<!-- Total Incoming Transfers -->  
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="left" width="50%" ><font face="Arial" size="2"><b>
+      Incoming Working Fund Transfers</b></font></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td>
+
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="40%"><font face="Arial" size="1">
+      DESCRIPTION</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      DATE</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@FUNDS_RECEIVED_LIST]
+  <tr>
+    <td nowrap height="36" width="40%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+
+</table>
+</td>
+ <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL INCOMING WORKING FUND TRANSFERS</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@FUNDS_RECEIVED]</font></td>
+  </tr>
+  <tr><td height="20"></td></tr>
+<!-- Total Outgoing Transfers --> 
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="left" width="50%" ><font face="Arial" size="2"><b>
+       Received Outgoing Working Fund Transfers</b></font></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td>
+      
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="40%"><font face="Arial" size="1">
+      VOUCHER NUMBER</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      DATE</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@FUNDS_SENT_LIST]
+  <tr>
+    <td nowrap height="36" width="40%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+
+</table>
+</td>
+ <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL RECEIVED OUTGOING WORKING FUND TRANSFERS</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" color="red" size="3">
+      ([WEBTOK@FUNDS_SENT])</font></td>
+  </tr>  
+   
+  <tr><td height="20"></td></tr>
+  
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" colspan="2" width="65%"><font face="Arial" size="2"><b>
+      TOTAL PART I A</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_1A]</font></td> 
+    <td  width="15%"></td>
+  </tr>
+    <tr><td height="20"></td></tr>
+  <tr>
+    <td nowrap colspan="2" align="LEFT" width="55%"><font face="Arial" size="3"><b>
+
+      B. ACCOUNTABILITY OF SUBORDINATE UNITS</b></font></td>
+        <td></td>
+  </tr>  
+<!-- Total Accountability of Subordinate Units --> 
+  <tr>
+    <td width="5%"></td>
+    <td>
+      
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="70%"><font face="Arial" size="1">
+      DETACHMENT NAME</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@SUBORDINATE_UNITS_LIST]
+  <tr>
+    <td nowrap height="36" width="70%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+
+</table>
+</td>
+ <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL ACCOUNTABILITY OF SUBORDINATE UNITS</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@SUBORDINATE_UNITS_TOTAL]</font></td>
+  </tr>  
+  
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" colspan="2" width="65%"><font face="Arial" size="2"><b>
+      TOTAL PART I B</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_IB]</font></td> 
+    <td  width="15%"></td>
+  </tr>
+    <tr><td height="20"></td></tr>
+  
+  
+
+<!-- Total Outgoing Transfers --> 
+  <tr>
+    <td id="Total_Outgoing_Title" nowrap align="left" width="70%" colspan="3"><font face="Arial" size="3"><b>
+      C. PENDING TRANSACTIONS (total of this section is not included in total for Part I)</b></font></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td id="Total_Outgoing_Title_2" nowrap align="LEFT" colspan="3" width="80%"><font face="Arial" size="2"><b>
+      Sent Outgoing Working Fund Transfers</b> (Payment not yet received by subordinate units)</font></td>
+    <td></td>
+  </tr>
+  
+
+  <tr>
+    <td width="5%"></td>
+    <td>
+    <div id="Outgoing_List">  
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="40%"><font face="Arial" size="1">
+      VOUCHER NUMBER</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      DATE</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@FUNDS_SENT_LIST_2]
+  <tr>
+    <td nowrap height="36" width="40%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+
+</table>
+</div>
+</td>
+ <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td id="Total_Outgoing" nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL SENT OUTGOING WORKING FUND TRANSFERS</b></font></td>
+    <td id="Total_Outgoing_Amt" nowrap align="right" width="15%"><font face="Arial" color="red" size="3">
+      ([WEBTOK@FUNDS_SENT_2])</font></td>
+  </tr>    
+    <tr><td height="20"></td></tr>  
+    
+    
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" colspan="3" width="80%"><font face="Arial" size="3"><b>
+      [WEBTOK@TOTAL_ACCOUNTABLE_FUNDS_LABEL]</b></font></td>  
+      <!--make this into a label, for custodain change, it is "Total Accountable funds and pending transaction"
+      and for audit it just says Total accountable funds. --> 
+       
+    <td nowrap align="right" width="15%"><font face="Arial" size="3"><b>
+      [WEBTOK@TOTAL_ACCOUNTABLE_FUNDS]</b></font></td>
+  </tr>
+
+</table>
+<!-- END: Part I Accountable Funds -->
+
+      </td>
+    </tr>
+    <tr>
+      <td width="100%" height="51">
+        <p align="center"><font face="Arial" size="4">II. FUNDS ON HAND OR ACCOUNTED FOR</font></td>
+    </tr>
+    <tr>
+      <td width="100%" height="20">
+      
+<!-- Part II FUNDS ON HAND OR ACCOUNTED FOR -->
+<table border="0" width="100%">
+  <tr>
+    <td nowrap align="LEFT" colspan="3" width="70%"><font face="Arial" size="3"><b>
+      A. CASH ON HAND AND IN BANK</b></font></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td nowrap align="RIGHT" colspan="3" width="70%"><font face="Arial" size="3">
+      <b>Total Part II A</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@CASH_ON_HAND]</font></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td nowrap align="LEFT" colspan="3" width="70%"><font face="Arial" size="3"><b>
+      B. OUTSTANDING TRANSACTIONS</b></font></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr><td height="15"></td></tr>
+
+  
+<!-- Total WORKING FUND TRANSFERS TO SUBORDINATE UNITS -->  
+  <tr>
+    <td width="5%"></td>
+    <td colspan="2"><font face="Arial" size="2"><b>Working Fund Transfers to Subordinate Units</b></font></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td>
+
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="70%"><font face="Arial" size="1">
+      DETACHMENT NAME</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@SUBORDINATE_UNITS_LIST_2]
+  <tr>
+    <td nowrap height="36" width="70%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+
+</table>
+
+</td>
+ <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL WORKING FUND TRANSFERS TO SUBORDINATE UNITS</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@SUBORDINATE_UNITS_TOTAL_2]</font></td>
+  </tr>
+  <tr><td height="15"></td></tr>
+  
+  
+<!-- Total UNRECEIVED PAYMENT LISTINGS 
+  <tr>
+    <td width="5%"></td>
+    <td colspan="2"><font face="Arial" size="2"><b>Payment Listings Sent to Subordinate Units but not yet Received</b></font></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td>
+
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="70%"><font face="Arial" size="1">
+      DETACHMENT NAME</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@UNRECEIVED_PYMTLISTING_LIST]
+  <tr>
+    <td nowrap height="36" width="40%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+
+</table>
+
+</td>
+ <td></td>
+  </tr>  
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL UNRECEIVED PAYMENT LISTINGS</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_UNRECEIVED_PYMTLISTING]</font></td>
+  </tr>-->
+  <tr><td height="15"></td></tr>
+  
+  
+<!-- Total DISALLOWED EXPENSE REPAYMENTS -->  
+  <tr>
+    <td width="5%"></td>
+    <td colspan="2"><font face="Arial" size="2"><b>Disallowed Expense Repayments</b></font></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td>
+
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="40%"><font face="Arial" size="1">
+      DESCRIPTION</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      DATE</font></td>
+    <td align="center" nowrap width="30%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@UNRECEIVED_DERS_LIST]
+  <tr>
+    <td nowrap height="36" width="40%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="30%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+
+</table>
+
+</td>
+ <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL DISALLOWED EXPENSE REPAYMENTS</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_UNRECEIVED_DERS]</font></td>
+  </tr>
+  <tr><td height="15"></td></tr>
+
+  
+<!-- Total Local Expenses --> 
+  <tr>
+    <td width="5%"></td>
+    <td colspan="2"><font face="Arial" size="2"><b>Local Expenses</b></font></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td>
+      
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="40%"><font face="Arial" size="1">
+      DESCRIPTION</font></td>
+    <td align="center" nowrap width="20%"><font face="Arial" size="1">
+      ID NUMBER</font></td>
+    <td align="center" nowrap width="20%"><font face="Arial" size="1">
+      DATE</font></td>
+    <td align="center" nowrap width="20%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@LOCAL_EXPENSES_LIST]
+  <tr>
+    <td nowrap height="36" width="40%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="20%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="20%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="20%"><font face="Arial" size="3">
+      </font></td>
+  </tr>
+</table>
+
+</td>
+ <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL LOCAL EXPENSES</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_LOCAL_EXPENSES]</font></td>
+  </tr>  
+  <tr><td height="15"></td></tr>
+
+
+<!-- Total Local Advances -->  
+  <tr>
+    <td width="5%"></td>
+    <td colspan="2"><font face="Arial" size="2"><b>Local Advances</b></font></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td>
+
+<table border="1" width="100%">
+  <tr>
+    <td align="center" nowrap width="40%"><font face="Arial" size="1">
+      DESCRIPTION</font></td>
+
+    <td align="center" nowrap width="20%"><font face="Arial" size="1">
+      ID NUMBER</font></td>
+    <td align="center" nowrap width="20%"><font face="Arial" size="1">
+      DATE</font></td>
+    <td align="center" nowrap width="20%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@LOCAL_ADVANCES_LIST]
+  <tr>
+    <td nowrap height="36" width="40%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="20%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="20%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="20%"><font face="Arial" size="3">
+      </font></td>
+  </tr>
+</table>
+
+</td>
+ <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL LOCAL ADVANCES</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_LOCAL_ADVANCES]</font></td>
+  </tr>
+  <tr><td height="15"></td></tr>
+  
+  
+<!-- Total Outstanding Payment Listings -->     
+  <tr>
+    <td width="5%"></td>
+    <td id="Total_Outstanding_Title" colspan="2"><font face="Arial" size="2"><b>Outstanding Payment Listings</b> (Waiting for [WEBTOK@PARENT] to send money for these expenses)</font></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td> 
+<div id="Outstanding_List">
+<table border="1" width="100%">
+  <tr>
+    <td align="center" colspan="2" nowrap width="80%"><font face="Arial" size="1">
+      DESCRIPTION</font></td>
+    <td align="center" nowrap width="20%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@OUTSTANDING_LIST]
+  <tr>
+    <td nowrap height="36" width="10%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="70%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="20%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+</table>
+</div>
+
+</td>
+ <td></td>
+  </tr>
+  <tr>
+
+    <td width="5%"></td>
+    <td id="Total_Outstanding_Msg" nowrap colspan="3" align="left" width="80%" ><font face="Arial" size="2">
+      * The money to cover Repaid Expenses will be sent to you on a DER Transfer from the originating unit. </font></td>
+  </tr>  
+
+  <tr>
+    <td width="5%"></td>
+    <td id="Total_Outstanding" nowrap align="right" width="50%" ><font face="Arial" size="2"><b>
+      TOTAL OUTSTANDING PAYMENT LISTINGS</b></font></td>
+    <td id="Total_Outstanding_Amt" nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_OUTSTANDING_PAYMENT_LISTINGS]</font></td>
+  </tr>  
+  <tr><td height="15"></td></tr>
+  
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" colspan="2" width="65%"><font face="Arial" size="2"><b>
+      TOTAL PART II B</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_OUTSTANDING]</font></td> 
+    <td  width="15%"></td>
+  </tr>
+  <tr><td height="15"></td></tr>  
+  
+  
+<!-- Liabilities --> 
+  <tr>
+    <td id="Total_Outstanding_2_Title1" nowrap align="LEFT" colspan="3" width="70%"><font face="Arial" size="3"><b>
+      C. LIABILITIES (total of this section is not included in total for Part II)</b></font></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td width="5%"></td>
+    <td id="Total_Outstanding_2_Title3" nowrap align="LEFT" colspan="3" width="80%"><font face="Arial" size="2"><b>
+      Payment Listings Received</b> (Payment not yet made to subordinate units)</font></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td width="5%"></td>
+    <td>
+<div id="Outstanding_List_2">      
+<table border="1" width="100%">
+  <tr>
+    <td align="center" colspan="2" nowrap width="80%"><font face="Arial" size="1">
+      DESCRIPTION</font></td>
+    <td align="center" nowrap width="20%"><font face="Arial" size="1">
+      AMOUNT</font></td>
+  </tr>
+[WEBTOK@OUTSTANDING_LIST_2]
+  <tr>
+    <td nowrap height="36" width="10%"><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="70%" ><font face="Arial" size="1">
+      </font></td>
+    <td nowrap width="20%" ><font face="Arial" size="1">
+      </font></td>
+  </tr>
+</table>
+</div>
+</td>
+ <td></td>
+  </tr>
+  
+  <tr>
+    <td width="5%"></td>
+    <td id="Total_Outstanding_2_Title2" nowrap align="LEFT" colspan="3" width="80%"><font face="Arial" size="2">
+      </font></td>
+  </tr>
+  
+  <tr>
+    <td width="5%"></td>
+    <td id="Total_Outstanding_2" nowrap align="right" colspan="2" width="65%" ><font face="Arial" size="2"><b>
+      TOTAL PART II C</b></font></td>
+    <td id="Total_Outstanding_2_Amt" nowrap align="right" width="15%"><font face="Arial" size="3">
+      [WEBTOK@TOTAL_OUTSTANDING_2]</font></td>
+  </tr>  
+  
+  <tr>
+    <td width="5%"></td>
+    <td nowrap align="right" colspan="2" width="65%"></td>
+    <td nowrap align="right" width="15%"></td> 
+    <td  width="15%"></td>
+  </tr>  
+  <tr><td height="15"></td></tr>
+  
+  
+  
+  
+  
+
+  <tr>
+    <td nowrap align="right" width="85%" colspan="4"><font face="Arial" size="3"><b>
+      TOTAL FUNDS ON HAND OR ACCOUNTED FOR (Parts A, B & C)</b></font></td>
+    <td nowrap align="right" width="15%"><font face="Arial" size="3"><b>
+      [WEBTOK@TOTAL_ACCOUNTED_FOR]</b></font></td>
+  </tr>
+</table>
+<!-- END: Part II FUNDS ON HAND OR ACCOUNTED FOR -->
+
+      </td>
+    </tr>
+    <tr>
+      <td id="Auditor_Section_Header" width="100%" height="51">
+        <p align="center"><font face="Arial" size="4">III. FINANCIAL STATEMENT CERTIFICATION</font></td>
+    </tr>
+    <tr>
+      <td id="Certification_Statement" width="100%" height="51">
+        <p align="center"><font face="Arial" size="1">I CERTIFY THAT TO THE BEST OF MY KNOWLEDGE THIS STATEMENT IS A COMPLETE AND ACCURATE RECORD OF THE ADVANCE OF FUNDS ACCOUNT</font></td>
+    </tr>
+    <tr>
+    <td>
+          <div id="AUDITOR_COMMENTS">
+          <table border="0" width="100%">
+            <tr>
+              <td>Comments</td>
+            </tr>
+          </table>
+          <table border="1" width="100%">
+            <tr>
+              <td width="100%" height="200"></td>
+            </tr>
+          </table>
+          </div>
+          <p>
+          <table border="0" width="100%">
+            <tr>
+              <td width="50%" height="46" valign="bottom"><font face="Arial" size="3">
+                [WEBTOK@CUSTODIAN_NAME]</font></td>
+              <td id="Line" width="50%" height="46" valign="bottom"><font face="Arial" size="1">__________________________________</font></td>
+            </tr>
+            <tr>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">[WEBTOK@NAME_OF_CUSTODIAN]</font></td>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">[WEBTOK@SIGNATURE_OF_CUSTODIAN]</font></td>
+            </tr>
+          </table>
+          <p>
+          <div id="SECOND_AUDITOR_SIGNATURE">
+          <table border="0" width="100%">
+            <tr>
+              <td width="50%" height="46" valign="bottom"><font face="Arial" size="3">
+                [WEBTOK@AUDITOR_2_NAME]</font></td>
+              <td width="50%" height="46" valign="bottom"><font face="Arial" size="1">__________________________________</font></td>
+            </tr>
+            <tr>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">NAME OF AUDITOR</font></td>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">SIGNATURE OF AUDITOR</font></td>
+            </tr>
+          </table>
+          <table border="0" width="100%">
+            <tr>
+              <td width="50%" height="46" valign="bottom"><font face="Arial" size="3">
+                [WEBTOK@DETCO_NAME]</font></td>
+              <td width="50%" height="46" valign="bottom"><font face="Arial" size="1">__________________________________</font></td>
+            </tr>
+            <tr>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">NAME OF DETCO</font></td>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">SIGNATURE OF DETCO</font></td>
+            </tr>
+          </table>
+          </div>
+          
+    </td>
+    </tr>
+    <tr>
+      <td  id="Custodian_Change_Section_Header" width="100%" height="51">
+        <p align="center"><font face="Arial" size="4">IV. TRANSFER OF ACCOUNT CERTIFICATION</font></td>
+    </tr>
+    <tr>
+    <td>
+          <div id="CUSTODIAN_CHANGE_SECTION">
+          <table border="0" width="100%" height="36">
+            <tr>
+      <td width="80%" height="34" colspan="2"><font size="1" face="Arial">I HAVE REVIEWED THE RECORDS OF THIS ACCOUNT AND ACCEPT RESPONSIBILITY FOR THE TOTAL AMOUNT OF ACCOUNTABLE FUNDS LISTED AT RIGHT</font></td>
+      <td width="20%" align="right"><font face="Arial" size="3"><b>[WEBTOK@TOTAL_RESPONSIBLE_FOR]</b></font></td>
+           </tr>    
+            <tr>
+              <td width="50%" height="46" valign="bottom"><font face="Arial" size="3">
+                [WEBTOK@INCOMING_CUSTODIAN_NAME]</font></td>
+              <td width="50%" height="46" valign="bottom" colspan="2"><font face="Arial" size="1">__________________________________</font></td>
+            </tr>
+            <tr>
+              <td width="50%" height="41" valign="top"><font face="Arial" size="1">[WEBTOK@NAME_INCOMING_CUSTODIAN]</font></td>
+              <td width="50%" height="41" valign="top" colspan="2"><font face="Arial" size="1">[WEBTOK@SIGNATURE_INCOMING_CUSTODIAN]</font></td>
+            </tr>
+
+         </table>
+         </div>
+    </td>
+    </tr>
+  </table>
+<!--</div>-->
+
+<!--The following script will execute based on the value in the Signature_Block where id = SIGNATURE.
+If the Signature_Block does not say PREVIOUSLY SIGNED then the script will excecute (Section IV will not be visible);
+Otherwise if the Signature_Block does say PREVIOUSLY SIGNED then the script will not execute (Section IV will be visible)-->
+<script language="vbscript" type="text/vbscript">
+<!--
+ [WEBTOK@SECTION_REPLACEMENT_1]
+ [WEBTOK@SECTION_REPLACEMENT_2]
+ [WEBTOK@SECTION_REPLACEMENT_3]
+ [WEBTOK@SECTION_REPLACEMENT_4]
+ [WEBTOK@SECTION_REPLACEMENT_5]
+ [WEBTOK@SECTION_2_REPLACEMENT_1]
+ [WEBTOK@SECTION_2_REPLACEMENT_2]
+ [WEBTOK@SECTION_2_REPLACEMENT_3]
+ [WEBTOK@SECTION_2_REPLACEMENT_4]
+ [WEBTOK@SECTION_2_REPLACEMENT_5]
+ [WEBTOK@SECTION_2_REPLACEMENT_6]
+ [WEBTOK@SECTION_3_REPLACEMENT_1]
+ [WEBTOK@SECTION_3_REPLACEMENT_2]
+ [WEBTOK@SECTION_3_REPLACEMENT_3]
+ [WEBTOK@SECTION_3_REPLACEMENT_4]
+ [WEBTOK@SECTION_3_REPLACEMENT_5]
+ [WEBTOK@SECTION_4_REPLACEMENT_1]
+ [WEBTOK@SECTION_4_REPLACEMENT_2]
+ [WEBTOK@SECTION_5_REPLACEMENT_1]
+ [WEBTOK@SECTION_5_REPLACEMENT_2]
+ [WEBTOK@SECTION_6_REPLACEMENT_1]
+ [WEBTOK@SECTION_6_REPLACEMENT_2]
+ [WEBTOK@SECTION_6_REPLACEMENT_3]
+-->
+</script>
+
+</body>
+
+</html>
+

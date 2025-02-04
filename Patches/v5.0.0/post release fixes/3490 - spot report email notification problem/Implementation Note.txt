@@ -1,0 +1,5 @@
+1 - Replace the osi_notification package body with this code.
+
+2 - Ensure a scheduled job exists that will execute deliverspot15 every 15 minutes.
+
+3 - Ensure the value in t_core_config for OSI.NOTIF_EMAIL_SUFFIX is in upper case.
