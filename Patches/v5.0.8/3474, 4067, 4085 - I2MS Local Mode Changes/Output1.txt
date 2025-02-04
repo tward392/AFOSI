@@ -1,0 +1,6 @@
+Table altered.
+Table altered.
+1 row updated.
+Commit complete.
+1 row created.
+Commit complete.
