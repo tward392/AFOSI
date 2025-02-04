@@ -1,0 +1,24 @@
+1 row created.
+Commit complete.
+2 rows created.
+Commit complete.
+1 row created.
+Commit complete.
+2 rows created.
+Commit complete.
+0 rows deleted.
+Commit complete.
+1 row deleted.
+Commit complete.
+1 row deleted.
+Commit complete.
+1 row deleted.
+Commit complete.
+1 row deleted.
+Commit complete.
+1 row deleted.
+Commit complete.
+2 rows deleted.
+Commit complete.
+2 rows deleted.
+Commit complete.
