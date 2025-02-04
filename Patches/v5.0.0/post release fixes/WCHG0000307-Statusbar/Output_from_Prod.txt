@@ -1,0 +1,38 @@
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+Component Export: APP PROCESS 2219531391532103
+...application processes
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+Component Export: PAGE TEMPLATE 179215462100554475
+...page templates for application: 100
+......Page template 179215462100554475
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+
+
+Set Application ID...
+Component Export: PAGE TEMPLATE 93856707457736574
+...page templates for application: 100
+......Page template 93856707457736574

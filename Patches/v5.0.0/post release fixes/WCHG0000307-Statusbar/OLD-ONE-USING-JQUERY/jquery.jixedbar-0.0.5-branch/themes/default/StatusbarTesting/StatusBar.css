@@ -1,0 +1,77 @@
+﻿#footpanel 
+          {
+           position: fixed;
+           bottom: 0; left: 0;
+           z-index: 9999;                          /*--Keeps the panel on top of all other elements--*/
+           background: #e5e5e5;
+           border: 1px solid #b5b5b5;
+           border-bottom: none;
+           width: 94%;
+           margin: 0 3%;
+           font: 10px normal Verdana, Arial, Helvetica, sans-serif;
+           height:30px;
+           padding:0px;
+          }
+
+/*--IE6 Hack - Fixed Positioning to the Bottom--*/
+*html #footpanel 
+                {
+                 margin-top: -1px; /*--prevents IE6 from having an infinity scroll bar - due to 1px border on #footpanel--*/
+                 position: absolute;
+                 top:expression(eval(document.compatMode &&document.compatMode=='CSS1Compat') ?documentElement.scrollTop+(documentElement.clientHeight-this.clientHeight) : document.body.scrollTop +(document.body.clientHeight-this.clientHeight));
+                }
+
+#footpanel ul 
+             {
+              padding: 0;
+              margin: 0;
+              float: left;
+              width: 100%;
+              list-style: none;
+              border-top: 1px solid #fff; /*--Gives the bevel feel on the panel--*/
+              font-size: 1.1em;
+             }
+
+#footpanel ul li
+                {
+                 padding:4px 8px 4px 8px;
+                 float: left;
+                 text-indent: -9999px;
+                 height: 16px; width: 16px;
+                 text-decoration: none;
+                 color: #333;
+                 position: relative;
+                 width: auto;
+                 border-right: 1px solid #bbb;
+                 text-indent: 0;
+                }
+
+#footpanel ul li:hover{ 
+                       background-color:#eee;
+                       border:#ccc solid 1px;
+                       padding:4px 8px 4px 8px;
+                       margin:2px;
+                       }
+
+/*-- panel tool tip styles--*/
+#footpanel li small
+                  {
+                   text-align: center;
+                   width: 70px;
+                   background: url(pop_arrow.gif) no-repeat center bottom;
+                   padding: 5px 5px 11px;
+                   display: none;            /*--Hide by default--*/
+                   color: #fff;
+                   font-size: 1em;
+                   text-indent: 0;
+                  }
+
+#footpanel li:hover small
+                         {
+                          display: block;     /*--Show on hover--*/
+                          position: absolute;
+                          top: -35px;         /*--Position tooltip 35px above the list item--*/
+                          left: 50%; 
+                          margin-left: -40px; /*--Center the tooltip--*/
+                          z-index: 9999;
+                         }

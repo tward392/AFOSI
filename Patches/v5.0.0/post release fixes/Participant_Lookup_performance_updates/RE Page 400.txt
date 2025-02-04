@@ -1,0 +1,234 @@
+From:	Jason Faris [jfaris2@csc.com]
+Sent:	Tuesday, January 18, 2011 10:33 AM
+To:	Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS
+Cc:	Carolyn L Yohe; Ward, Timothy J Ctr USAF AFOSI AFOSI/XII
+Subject:	RE: Page 400
+Attachments:	Participant_Lookup_performance_updates.zip
+
+
+Wayne/Tim, 
+        I've updated the DT 'Participant - ALL' and 'Participants - 
+Organization' pages to use CASE statements and regular expression 'ABC' 
+comparisons to improve performance.  This is in line with Wayne's suggestion 
+to use conditional column fetches.  I made similar updates to the Participant 
+Locator pages (400,401).  While the 'All OSI' results are returning very 
+quickly on our DEV instance, the 'ABC', 'Numeric' and 'Alpha' filters still 
+take about 40 seconds here.  Let me know if the results are improved on the 
+DEVLan. 
+
+
+
+Thanks, 
+Jason Faris
+
+I2G Developer
+Computer Sciences Corporation
+1526  East Parham Road
+Richmond, VA 23228
+(804) 782-8234
+
+This is a PRIVATE message. If you are not the intended recipient, please 
+delete without copying and kindly advise us by e-mail of the mistake in 
+delivery. 
+NOTE: Regardless of content, this e-mail shall not operate to bind CSC to any 
+order or other contract unless pursuant to explicit written agreement or 
+government initiative expressly permitting the use of e-mail for such purpose. 
+
+
+
+From: 	"Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS" 
+<Wayne.Combs@ogn.af.mil> 
+To: 	Carolyn L Yohe/ESI/CSC@CSC 
+Cc: 	Jason Faris/ESI/CSC@CSC, "Ward, Timothy J Ctr USAF AFOSI AFOSI/XII" 
+<timothy.ward@ogn.af.mil> 
+Date: 	01/14/2011 05:15 PM 
+Subject: 	RE: Page 400
+
+________________________________
+
+
+
+
+Carolyn,
+
+They seem to be pulling tens of thousands of address records.  Perhaps we are 
+not filtering the query properly? For instance, do I anticipate seeing birth 
+address information on the 100,000 organizations that we pre-loaded in the 
+system?  At this point in time, we have relatively few individuals as 
+participants and yet we are looking for thousands of birth addresses.  To 
+compound the problem, one query is running this:
+
+      osi_participant.get_birth_country(o.sid) as "Birth Country",
+      osi_participant.get_birth_state(o.sid) as "Birth State",
+      osi_participant.get_birth_city(o.sid) as "Birth City", ...
+
+This triples the number of calls to get_address_data for every record 
+examined.  Since these birth address pieces are related, maybe we can make one 
+new function to return all three with a single call.
+
+
+With regard to filtering, I ran:
+
+declare
+y varchar2(100) := null;
+begin
+for x in (select a.sid from t_osi_participant a )
+loop
+y :=  osi_participant.GET_BIRTH_CITY(x.sid);
+end loop;
+end;
+
+After 45 minutes, I killed it on the Beta system...
+
+Then I ran:
+
+declare
+y varchar2(100) := null;
+begin
+for x in (select a.sid from t_osi_participant a )
+loop
+if osi_participant.GET_TYPE(x.sid) = 'Individual'
+then
+y :=  osi_participant.GET_BIRTH_CITY(x.sid);
+end if;
+end loop;
+end;
+
+Which completed in 11 seconds (165 rows pulling birth information -vs- 
+102,000+).  This was just a quick test.  There may be even better ways to 
+filter.
+
+
+Just some ideas.  I'm going to be out on Monday so, I will try to follow-up on 
+this Tuesday.
+
+Thanks,
+Wayne
+
+
+-----Original Message-----
+From: Carolyn L Yohe [mailto:cyohe@csc.com <mailto:cyohe@csc.com> ]
+Sent: Friday, January 14, 2011 2:59 PM
+To: Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS
+Cc: Jason Faris; Ward, Timothy J Ctr USAF AFOSI AFOSI/XII
+Subject: Re: Page 400
+
+Wayne,
+
+Jason is working on implementing the collections mechanism on this view.
+I'm wondering if we can remove some of these search criteria, to reduce the
+number of function calls?  We could implement an advanced search feature
+somehow to allow them to still do those searches when necessary.  What do
+you think?
+
+Carolyn
+
+
+
+Carolyn L. Johnson (aka Carolyn L. Yohe)
+
+Deputy Program Manager
+
+CSC
+
+
+
+1526 East Parham Road; Richmond, VA 23228
+
+Enforcement, Security and Intelligence Division | p: 804.782.8215 | m: 
+804.301.5698 | f:
+804.782.8396 | cyohe@csc.com | www.csc.com
+
+
+
+
+
+This is a PRIVATE message. If you are not the intended recipient, please
+delete without copying and kindly advise us by e-mail of the mistake in
+delivery.
+NOTE: Regardless of content, this e-mail shall not operate to bind CSC to
+any order or other contract unless pursuant to explicit written agreement
+or government initiative expressly permitting the use of e-mail for such
+purpose.
+
+
+|------------>
+| From:      |
+|------------>
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+ |"Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS" <Wayne.Combs@ogn.af.mil>                                                                   
+|
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+|------------>
+| To:        |
+|------------>
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+ |Jason Faris/ESI/CSC@CSC                                                                                                                 
+|
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+|------------>
+| Cc:        |
+|------------>
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+ |Carolyn L Yohe/ESI/CSC@CSC, "Ward, Timothy J Ctr USAF AFOSI AFOSI/XII" 
+<timothy.ward@ogn.af.mil>                                        |
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+|------------>
+| Date:      |
+|------------>
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+ |01/14/2011 02:08 PM                                                                                                                     
+|
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+|------------>
+| Subject:   |
+|------------>
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+ |Page 400                                                                                                                                
+|
+ >----------------------------------------------------------------------------
+------------------------------------------------------------|
+
+
+
+
+
+Jason,
+
+This is the code causing the bottleneck.  It is in
+OSI_PARTICIPANT.GET_ADDRESS_DATA and is called by other functions in that
+package (like the birth city/country).
+
+Thanks,
+Wayne
+
+SELECT PA.SID, A.ADDRESS_1, A.ADDRESS_2, A.CITY, A.PROVINCE, S.DESCRIPTION
+AS STATE,
+S.CODE AS STATE_CODE, A.POSTAL_CODE, C.DESCRIPTION AS COUNTRY, C.CODE AS
+COUNTRY_CODE, A.GEO_COORDS
+FROM T_OSI_ADDRESS A, T_OSI_PARTIC_ADDRESS PA, T_OSI_ADDR_TYPE T,
+T_DIBRS_COUNTRY C, T_DIBRS_STATE S
+WHERE ( PA.PARTICIPANT_VERSION = :B2 OR PA.PARTICIPANT_VERSION =
+OSI_PARTICIPANT.GET_CURRENT_VERSION(:B2 ))
+ AND A.SID = PA.ADDRESS(+) AND A.ADDRESS_TYPE = T.SID
+ AND T.CODE = :B1
+ AND A.STATE = S.SID(+)
+ AND A.COUNTRY = C.SID(+)
+ORDER BY PA.MODIFY_ON DESC
+
+
+
+
+
+
+
+

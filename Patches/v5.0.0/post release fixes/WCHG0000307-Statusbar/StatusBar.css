@@ -1,0 +1,291 @@
+﻿#footpanel 
+          {
+	   position: fixed;
+           bottom: 0;
+           right: 0px;
+           z-index: 9999;                    /*--Keeps the panel on top of all other elements--*/
+           background: #e5e5e5;
+           border: 1px solid #b5b5b5;
+           border-bottom: 1px;
+           width: auto;
+           margin: 0 95px;
+           font: 10px normal Verdana, Arial, Helvetica, sans-serif;
+           height:21px; /* 30px; */
+           padding:0px;
+          }
+
+/*--IE6 Hack - Fixed Positioning to the Bottom--*/
+*html #footpanel 
+                {
+                 margin-top: -1px; /*--prevents IE6 from having an infinity scroll bar - due to 1px border on #footpanel--*/
+                 position: absolute;
+                 top:expression(eval(document.compatMode &&document.compatMode=='CSS1Compat') ?documentElement.scrollTop+(documentElement.clientHeight-this.clientHeight) : document.body.scrollTop +(document.body.clientHeight-this.clientHeight));
+                }
+
+#footpanel ul 
+             {
+              padding: 0;
+              margin: 0;
+              float: left;
+              width: 100%;
+              list-style: none;
+              border-top: 1px solid #fff; /*--Gives the bevel feel on the panel--*/
+              font-size: 1.1em;
+             }
+
+/*-- Panel Settings --*/
+#footpanel ul li
+                {
+                 /*padding: 6px 8px 6px 8px;*/ /* Top, Right, Bottom , Left */
+                 padding: 2px 3px 2px 3px;
+                 float: left;
+                 text-indent: -9999px;
+                 text-decoration: none;
+                 color: #333;
+                 position: relative;
+                 width: auto;
+                 height: auto;
+                 text-indent: 0;
+                 border:#e5e5e5 solid 1px;
+                 border-right: 1px solid #bbb;
+                }
+
+/*-- Panel Settings when Mouse is Over it --*/
+#footpanel ul li:hover{ 
+                       background-color:#eee;
+                       border:#ccc solid 1px;
+                       /* padding: 6px 8px 6px 8px; */
+                       padding: 2px 3px 2px 3px;
+                       width: auto;
+                       height: auto;
+                       /*-moz-border-radius: 8px;
+                       -webkit-border-radius: 8px; --Rounded Edges */
+                      }
+
+/*-- Panel Tool Tip Styles--*/
+#footpanel li small
+                   {
+                    text-align: center;
+                    width: 100px;
+                    background: url(/i/javascript/pop_arrow.gif) no-repeat center bottom;
+                    padding: 5px 5px 11px;
+                    display: none;            /*--Hide by default--*/
+                    color: #fff;
+                    font-size: 1em;
+                    text-indent: 0;
+                    /*-moz-border-radius: 8px;
+                    -webkit-border-radius: 8px; --Rounded Edges */
+                   }
+
+#footpanel li:hover small
+                         {
+                          display: block;     /*--Show on hover--*/
+                          position: absolute;
+                          top: -35px;         /*--Position tooltip 35px above the list item--*/
+                          left: 50%; 
+                          margin-left: -60px; /*-40px;*/ /*--Center the tooltip--*/
+                          z-index: 9999;
+                          width: 100px; /*70px;*/
+                          /*-moz-border-radius: 8px;
+                          -webkit-border-radius: 8px; --Rounded Edges */
+                         }
+
+/**************/
+/**************/
+/* MAX Button */
+/**************/
+/**************/
+#maxbuttononly
+          {
+           display: none;
+          }
+
+#maxbuttononly 
+          {
+           position: fixed;
+           bottom: 0; 
+/*           left: 0;*/
+           right: 0;
+           z-index: 9999;                    /*--Keeps the panel on top of all other elements--*/
+           background: #e5e5e5;
+           border: 1px solid #b5b5b5;
+           border-bottom: 1px;
+           width: auto;
+/*           margin: 0 3%;*/
+           margin: 0 70px;
+           font: 10px normal Verdana, Arial, Helvetica, sans-serif;
+           height:21px;
+           padding:0px;
+          }
+
+
+/*--IE6 Hack - Fixed Positioning to the Bottom--*/
+*html #maxbuttononly 
+                {
+                 margin-top: -1px; /*--prevents IE6 from having an infinity scroll bar - due to 1px border on #footpanel--*/
+                 position: absolute;
+                 top:expression(eval(document.compatMode &&document.compatMode=='CSS1Compat') ?documentElement.scrollTop+(documentElement.clientHeight-this.clientHeight) : document.body.scrollTop +(document.body.clientHeight-this.clientHeight));
+                }
+
+#maxbuttononly ul 
+             {
+              padding: 0;
+              margin: 0;
+              float: left;
+              width: 100%;
+              list-style: none;
+              border-top: 1px solid #fff; /*--Gives the bevel feel on the panel--*/
+              font-size: 1.1em;
+             }
+
+/*-- Panel Settings --*/
+#maxbuttononly ul li
+                {
+                 /*padding: 6px 8px 6px 8px;*/ /* Top, Right, Bottom , Left */
+                 padding: 2px 3px 2px 3px;
+                 float: left;
+                 text-indent: -9999px;
+                 text-decoration: none;
+                 color: #333;
+                 position: relative;
+                 width: auto;
+                 height: auto;
+                 text-indent: 0;
+                 border:#e5e5e5 solid 1px;
+                 border-right: 1px solid #bbb;
+                }
+
+/*-- Panel Settings when Mouse is Over it --*/
+#maxbuttononly ul li:hover{ 
+                       background-color:#eee;
+                       border:#ccc solid 1px;
+                       padding: 2px 3px 2px 3px;
+                       width: auto;
+                       height: auto;
+                       /*-moz-border-radius: 8px;
+                       -webkit-border-radius: 8px; --Rounded Edges */
+                      }
+
+/*-- Panel Tool Tip Styles--*/
+#maxbuttononly li small
+                       {
+                        text-align: center;
+                        width: 100px;
+                        background: url(/i/javascript/pop_arrow.gif) no-repeat center bottom;
+                        padding: 5px 5px 11px;
+                        display: none;            /*--Hide by default--*/
+                        color: #fff;
+                        font-size: 1em;
+                        text-indent: 0;
+                        /*-moz-border-radius: 8px;
+                        -webkit-border-radius: 8px; --Rounded Edges */
+                       }
+
+#maxbuttononly li:hover small
+                             {
+                              display: block;     /*--Show on hover--*/
+                              position: absolute;
+                              top: -35px;         /*--Position tooltip 35px above the list item--*/
+                              left: 50%; 
+                              margin-left: -60px; /*-40px;*/ /*--Center the tooltip--*/
+                              z-index: 9999;
+                              width: 100px; /*70px;*/
+                              /*-moz-border-radius: 8px;
+                              -webkit-border-radius: 8px; --Rounded Edges */
+                             }
+
+/**************/
+/**************/
+/* MIN Button */
+/**************/
+/**************/
+#minbuttononly 
+          {
+           position: fixed;
+           bottom: 0; right: 0;
+           z-index: 9999;                    /*--Keeps the panel on top of all other elements--*/
+           background: #e5e5e5;
+           border: 1px solid #b5b5b5;
+           border-bottom: 1px;
+           width: auto;
+           margin: 0 70px;
+           font: 10px normal Verdana, Arial, Helvetica, sans-serif;
+           height:21px;
+           padding:0px;
+          }
+
+
+/*--IE6 Hack - Fixed Positioning to the Bottom--*/
+*html #minbuttononly 
+                {
+                 margin-top: -1px; /*--prevents IE6 from having an infinity scroll bar - due to 1px border on #footpanel--*/
+                 position: absolute;
+                 top:expression(eval(document.compatMode &&document.compatMode=='CSS1Compat') ?documentElement.scrollTop+(documentElement.clientHeight-this.clientHeight) : document.body.scrollTop +(document.body.clientHeight-this.clientHeight));
+                }
+
+#minbuttononly ul 
+             {
+              padding: 0;
+              margin: 0;
+              float: left;
+              width: 100%;
+              list-style: none;
+              border-top: 1px solid #fff; /*--Gives the bevel feel on the panel--*/
+              font-size: 1.1em;
+             }
+
+/*-- Panel Settings --*/
+#minbuttononly ul li
+                {
+                 /*padding: 6px 8px 6px 8px;*/ /* Top, Right, Bottom , Left */
+                 padding: 2px 3px 2px 3px;
+                 float: left;
+                 text-indent: -9999px;
+                 text-decoration: none;
+                 color: #333;
+                 position: relative;
+                 width: auto;
+                 height: auto;
+                 text-indent: 0;
+                 border:#e5e5e5 solid 1px;
+                 border-right: 1px solid #bbb;
+                }
+
+/*-- Panel Settings when Mouse is Over it --*/
+#minbuttononly ul li:hover{ 
+                       background-color:#eee;
+                       border:#ccc solid 1px;
+                       padding: 2px 3px 2px 3px;
+                       width: auto;
+                       height: auto;
+                       /*-moz-border-radius: 8px;
+                       -webkit-border-radius: 8px; --Rounded Edges */
+                      }
+
+/*-- Panel Tool Tip Styles--*/
+#minbuttononly li small
+                       {
+                        text-align: center;
+                        width: 100px;
+                        background: url(/i/javascript/pop_arrow.gif) no-repeat center bottom;
+                        padding: 5px 5px 11px;
+                        display: none;            /*--Hide by default--*/
+                        color: #fff;
+                        font-size: 1em;
+                        text-indent: 0;
+                        /*-moz-border-radius: 8px;
+                        -webkit-border-radius: 8px; --Rounded Edges */
+                       }
+
+#minbuttononly li:hover small
+                             {
+                              display: block;     /*--Show on hover--*/
+                              position: absolute;
+                              top: -35px;         /*--Position tooltip 35px above the list item--*/
+                              left: 50%; 
+                              margin-left: -60px; /*-40px;*/ /*--Center the tooltip--*/
+                              z-index: 9999;
+                              width: 100px; /*70px;*/
+                              /*-moz-border-radius: 8px;
+                              -webkit-border-radius: 8px; --Rounded Edges */
+                             }
