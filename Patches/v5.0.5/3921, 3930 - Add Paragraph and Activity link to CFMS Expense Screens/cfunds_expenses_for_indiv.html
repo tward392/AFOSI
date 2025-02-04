@@ -1,0 +1,57 @@
+<!-- Expenses For Individual <html> -->
+
+<SCRIPT LANGUAGE="VBscript">
+<!--
+dim mPVal
+dim mOrgTarget
+
+function Do_Refresh()
+    document.frmMain.pCommand.value = "Refresh"
+    'document.frmMain.pUnit.value = document.frmMain.pUnitPick.value
+    document.frmMain.submit
+end function
+-->
+</SCRIPT>
+
+<form method="POST" action=[WEBTOK@SELF] name="frmMain">
+<input type="hidden" name="pSID" value=[WEBTOK@SID_FLAG]>
+<input type="hidden" name="pCommand" value="Refresh">
+<input type="hidden" name="pUnit" id="pUnit" value=[WEBTOK@UNIT_FLAG]>
+
+<table border="0">
+ <tr>
+  <td colspan="3">
+   <table border="0">
+    <tr>
+     <td>Unit: &nbsp;&nbsp;&nbsp;</td>
+     <td>[WEBTOK@UNIT_LABEL]</td>
+    </tr>
+    <tr>
+     <td>Claimant: &nbsp;&nbsp;&nbsp;</td>
+     <td>[WEBTOK@CLAIMANT_LABEL]</td>
+    </tr>
+    <tr>
+     <td>Fiscal Year: &nbsp;&nbsp;&nbsp;</td>
+     <td>[WEBTOK@FISCAL_YEAR_LABEL]</td>
+    </tr>
+   </table>
+  </td>
+ </tr>
+[WEBTOK@FILTERBAR]
+</table>
+<br>
+</form>
+<span id="ExpenseList">
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Expense Date</th>
+    <th width="15%">Voucher #</th>
+    <th width="20%">Expense Category</th>
+    <th width="10%">Expense Amount</th>
+    <th width="20%">Status</th>
+    <th width="25%">Paragraph</th>
+  </tr>
+  [WEBTOK@EXPENSE_LIST]
+<tr><td colspan="6"></tr>
+</table>
+</span>

@@ -1,0 +1,34 @@
+Table altered.
+7100 rows updated.
+Commit complete.
+Table altered.
+Table altered.
+Commit complete.
+Table altered.
+7100 rows updated.
+Commit complete.
+Table altered.
+Table altered.
+Commit complete.
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 22420
+...PAGE 22420: Source Meet Details - Recieived
+...done
+APPLICATION 100 - Web-I2MS
+Set Credentials...
+Check Compatibility...
+API Last Extended:20090112
+Your Current Version:20090112
+This import is compatible with version: 20090112
+COMPATIBLE (You should be able to run this import without issues.)
+Set Application ID...
+...Remove page 22425
+...PAGE 22425: Source Meet Activity - Levied
+...done
