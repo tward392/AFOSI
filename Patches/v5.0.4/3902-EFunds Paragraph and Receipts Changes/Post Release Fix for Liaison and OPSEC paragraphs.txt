@@ -1,0 +1,131 @@
+
+Modifications on 1/2/2012:
+
+- added a new record A2.2.33A to report "Liaison Functions" as A2.2.33
+
+- modified the existing "Operations Security (OPSEC) - Sensitive Purchases" paragraph to report as A2.2.34 (formerly A2.2.35)
+
+
+
+
+
+
+
+-----Original Message-----
+From: Carr, Adam R MSgt USAF AFOSI HQ/FM 
+Sent: Tuesday, January 03, 2012 8:36 AM
+To: Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS; Stukerjurgen, Douglas M. MSgt USAF AFOSI/FM
+Cc: Ward, Timothy J Ctr USAF AFOSI AFOSI/XII
+Subject: RE: efms
+
+Gentlemen,
+
+Sorry for not replying earlier.  The references below are correct.  Please proceed with your plan.  Thank you.
+
+V/R, 
+
+
+MSgt Carr
+Adam R. Carr, MSgt, USAF
+HQ Air Force Office of Special Investigations 
+27130 Telegraph Road Quantico, VA 22134
+DSN:  240-8170
+Comm: 571-305-8170
+
+-----Original Message-----
+From: Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS 
+Sent: Tuesday, December 27, 2011 9:13 AM
+To: Carr, Adam R MSgt USAF AFOSI HQ/FM; Stukerjurgen, Douglas M. MSgt USAF AFOSI/FM
+Cc: Ward, Timothy J Ctr USAF AFOSI AFOSI/XII; Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS
+Subject: RE: efms
+
+Sir,
+
+I never received a response on this one.
+
+Thanks,
+Wayne
+
+
+-----Original Message-----
+From: Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS 
+Sent: Wednesday, December 14, 2011 10:26 AM
+To: Carr, Adam R MSgt USAF AFOSI HQ/FM
+Cc: Ward, Timothy J Ctr USAF AFOSI AFOSI/XII
+Subject: RE: efms
+
+Sir,
+
+To remedy the Liaison paragraph issue we would like to do the following:
+
+Activate A2.2.33 as  "Liaison Functions"
+
+Switch "Operations Security (OPSEC) - Sensitive Purchases" from its current value - A2.2.35,  to A2.2.34 as indicated below.
+
+Please let us know that these paragraph changes are correct.
+
+Thanks,
+Wayne
+
+ 
+
+-----Original Message-----
+From: Carr, Adam R MSgt USAF AFOSI HQ/FM 
+Sent: Tuesday, December 13, 2011 3:28 PM
+To: Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS
+Subject: FW: efms
+
+Sir,
+
+In change request #3902, did it leave the reference to A2.2.33 as just Liaison Function?  Please let me know.  Thank you.
+
+V/R, 
+
+
+MSgt Carr
+Adam R. Carr, MSgt, USAF
+HQ Air Force Office of Special Investigations 
+27130 Telegraph Road Quantico, VA 22134
+DSN:  240-8170
+Comm: 571-305-8170
+
+-----Original Message-----
+From: Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS 
+Sent: Monday, December 12, 2011 2:27 PM
+To: Stukerjurgen, Douglas M. MSgt USAF AFOSI/FM
+Cc: McLaughlin, Wayne W SA USAF AFOSI XIIM; Ward, Timothy J Ctr USAF AFOSI AFOSI/XII; Hill, James A Jr SA USAF AFOSI/XII
+Subject: RE: efms
+
+Sir,
+
+This was deactivated per change request #3902.
+
+From the CR:
+
+" The newest regulation on E-Funds does not separate Liaison's into Formal or Informal sections. The paragraph for section of the E-Funds expense pages still shows Para. A2.2.33 and A2.2.34 for informal and formal functions, however Para. A2.2.34 now covers OPSEC-Sensitive Purchases. Also, the current amount for receipt needed is $100.00; the current Receipts Disposition drop-down menu still shows $75.00."
+
+Thanks,
+Wayne
+
+
+
+
+-----Original Message-----
+From: Stukerjurgen, Douglas M. MSgt USAF AFOSI/FM 
+Sent: Monday, December 12, 2011 2:02 PM
+To: McLaughlin, Wayne W SA USAF AFOSI XIIM; Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS
+Subject: efms
+
+Have received two calls and had them submit trouble tickets through the help desk but the paragraph for liaison event seems to not be in web cfms/efms
+
+Thanks, 
+
+
+MSgt Stukerjurgen
+Douglas Stukerjurgen, MSgt, USAF
+HQ Air Force Office of Special Investigations
+27130 Telegraph Road
+Quantico, VA 22134
+Comm: 571-305-8168
+
+
