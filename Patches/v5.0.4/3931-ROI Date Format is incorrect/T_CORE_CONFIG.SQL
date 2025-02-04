@@ -1,0 +1,2 @@
+INSERT INTO T_CORE_CONFIG ( SID, CODE, SETTING, DESCRIPTION, CREATE_BY, CREATE_ON, MODIFY_BY, MODIFY_ON ) VALUES ( '333181CY', 'CORE.DATE_FMT_REPORTS', 'FMDD Mon FMFXYY', 'Date format for Reports....  1 Sep 11 whic was decided upon in the I2MS BPR Years Ago.  Don''t know why Richmond changed it for WebI2MS?', 'timothy.ward',  TO_Date( '09/21/2011 07:42:38 AM', 'MM/DD/YYYY HH:MI:SS AM'), 'timothy.ward',  TO_Date( '09/21/2011 07:43:44 AM', 'MM/DD/YYYY HH:MI:SS AM')); 
+COMMIT;

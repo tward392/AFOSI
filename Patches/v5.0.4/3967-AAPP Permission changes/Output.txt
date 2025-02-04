@@ -1,0 +1,14 @@
+10 rows created.
+Commit complete.
+12 rows created.
+Commit complete.
+77 rows created.
+Commit complete.
+10 rows created.
+Commit complete.
+13 rows created.
+Commit complete.
+7 rows created.
+Commit complete.
+1 row created.
+Commit complete.
