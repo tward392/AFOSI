@@ -1,0 +1,2 @@
+UPDATE T_CORE_CONFIG SETTING='<img class="PrecisionDateIcon" src="#IMAGE_PREFIX#CalendarR24.png" alt="Precision Date" title="Precision Date" style="display: inline; vertical-align:bottom; padding-left:2px;">'WHERE CODE='OSI.ICON_DATE';
+COMMIT;
