@@ -1,0 +1,154 @@
+From:	Carolyn L Yohe [cyohe@csc.com]
+Sent:	Monday, January 03, 2011 4:26 PM
+To:	Combs, Wayne Ctr USAF AFOSI AFOSI/XII-I2MS; Ward, Timothy J Ctr USAF 
+AFOSI AFOSI/XII
+Cc:	pcgenius@gmail.com
+Subject:	Known Issues document is attached, bug analysis plans
+Attachments:	Known Issues for Web-I2MS release on Jan 4 2011.doc
+
+
+FYI, attached below is the Known Issues document - it does not have
+everything listed, just the main ones.  I plan on having the developers
+down here investigate most of these, so we can have fixes in mind (but no
+code changes for now).  If you'd like to solve some of them up there,
+please let me know so we don't duplicate work.
+
+There are a few issues with the Complaint Report/ ROI report, sections that
+are not getting data - the Associated Activities section is the main one,
+and JaNelle has found a fix for that today.  She also identified that there
+is a missing date on one tab, and investigated that.  So if you'd like us
+to share the analysis work for either of these, please let us know.
+
+Maybe we can post any analysis in WIRDUP for you to easily access as we
+complete things, instead of waiting until you ask?
+
+We aren't changing code now, just analyzing to be ready with support of
+these known issues.
+
+Jason is looking into the over-restrictive process on creating a
+Coordination activity that I mentioned to Wayne C today.
+
+Carolyn
+                                                                                                  
+                                                                                                  
+                                                                                                  
+ Carolyn L. Johnson (aka Carolyn L. Yohe)                                                         
+                                                                                                  
+ Deputy Program Manager                                                                           
+                                                                                                  
+ CSC                                                                                              
+                                                                                                  
+                                                                                                  
+                                                                                                  
+ 1526 East Parham Road; Richmond, VA 23228                                                        
+                                                                                                  
+ Enforcement, Security and Intelligence Division | p: 804.782.8215 | m: 
+804.301.5698 | f:         
+ 804.782.8396 | cyohe@csc.com | www.csc.com                                                       
+                                                                                                  
+
+
+
+
+This is a PRIVATE message. If you are not the intended recipient, please
+delete without copying and kindly advise us by e-mail of the mistake in
+delivery.
+NOTE: Regardless of content, this e-mail shall not operate to bind CSC to
+any order or other contract unless pursuant to explicit written agreement
+or government initiative expressly permitting the use of e-mail for such
+purpose.
+----- Forwarded by Carolyn L Yohe/ESI/CSC on 01/03/2011 04:17 PM -----
+|------------>
+| From:      |
+|------------>
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+  |Carolyn L Yohe/ESI/CSC                                                                                                                  
+|
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+|------------>
+| To:        |
+|------------>
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+  |"Russotti, Andrea M Ctr USAF AFOSI XI" <Andrea.Russotti@ogn.af.mil>                                                                     
+|
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+|------------>
+| Cc:        |
+|------------>
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+  |dalys.macon.ctr@ogn.af.mil, paul.safford.ctr@ogn.af.mil, 
+Raymond.Barrett@ogn.af.mil, Michael Bailey/USA/CSC@CSC                         
+|
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+|------------>
+| Date:      |
+|------------>
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+  |01/03/2011 02:55 PM                                                                                                                     
+|
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+|------------>
+| Subject:   |
+|------------>
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+  |Known Issues document is attached                                                                                                       
+|
+  >---------------------------------------------------------------------------
+-------------------------------------------------------------|
+
+
+
+
+Andrea,
+
+Attached is the Known Issues document.  I gave it a TOC so it would be
+easier to see at a glance what it contains.  I formatted it so it all works
+together, and I don't think we have time to change it before tomorrow, but
+if you see anything glaringly wrong, please let me know.
+
+Could you please proof-read it and then coordinate with Paul or Dalys on
+how to get this through a QA review and then to the customer?  There is a
+formal process to follow.
+
+Thank you,
+
+Carolyn
+
+(See attached file: Known Issues for Web-I2MS release on Jan 4 2011.doc)
+                                                                                                  
+                                                                                                  
+                                                                                                  
+ Carolyn L. Johnson (aka Carolyn L. Yohe)                                                         
+                                                                                                  
+ Deputy Program Manager                                                                           
+                                                                                                  
+ CSC                                                                                              
+                                                                                                  
+                                                                                                  
+                                                                                                  
+ 1526 East Parham Road; Richmond, VA 23228                                                        
+                                                                                                  
+ Enforcement, Security and Intelligence Division | p: 804.782.8215 | m: 
+804.301.5698 | f:         
+ 804.782.8396 | cyohe@csc.com | www.csc.com                                                       
+                                                                                                  
+
+
+
+
+This is a PRIVATE message. If you are not the intended recipient, please
+delete without copying and kindly advise us by e-mail of the mistake in
+delivery.
+NOTE: Regardless of content, this e-mail shall not operate to bind CSC to
+any order or other contract unless pursuant to explicit written agreement
+or government initiative expressly permitting the use of e-mail for such
+purpose.
